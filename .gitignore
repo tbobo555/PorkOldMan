@@ -1,0 +1,20 @@
+# Ignore phaser js
+public/assets/js/phaser.js
+public/assets/js/phaser.min.js
+
+# Ignore files build by xcode
+*.mode*v*
+*.pbxuser
+*.xcbkptlist
+*.xcworkspacedata
+*.xcuserstate
+*.xccheckout
+xcschememanagement.plist
+.DS_Store
+._.*
+xcuserdata/
+DerivedData/
+
+# Ignore files built by AppCode
+.idea/
+
