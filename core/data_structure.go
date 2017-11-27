@@ -23,9 +23,3 @@ type CommonData struct {
     HostY float32
     GuestY float32
 }
-
-type PlayerInfo struct {
-    Id string
-    X float32
-    Y float32
-}
