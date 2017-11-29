@@ -11,6 +11,7 @@ const (
     StopActionKey = "Stop"
     AdjustActionKey = "Adjust"
     RefreshAllActionKey = "RefreshAll"
+    DefaultPadding = "="
 )
 
 type CommonData struct {
@@ -22,4 +23,13 @@ type CommonData struct {
     GuestX float32
     HostY float32
     GuestY float32
+}
+
+type IdData struct {
+    Id string
+}
+
+type CommonHashData struct {
+    Content string
+    Key string
 }
