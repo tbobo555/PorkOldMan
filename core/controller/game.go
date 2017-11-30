@@ -12,10 +12,10 @@ var upgrader = websocket.Upgrader {
     WriteBufferSize: 1024,
 }
 
-// 服務路由"io/game/downstairs"的request
-func IoGameDownStairsServeSocket(w http.ResponseWriter, r *http.Request) {
+// 服務路由"io/game/downstairs"的socket request
+func IoGameDownStairsServeSocket(writer http.ResponseWriter, request *http.Request) {
     // connect to web socket
-    conn, err := upgrader.Upgrade(w, r, nil)
+    conn, err := upgrader.Upgrade(writer, request, nil)
     if err != nil {
         log.Panicln(err)
     }
