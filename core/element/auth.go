@@ -28,7 +28,7 @@ func (a *Auth) MakeGuestUserToken(id string) string {
         //todo: error here
     }
 
-    sign, err := a.makeSignWithShad256(config.GuestTokenKey, body)
+    sign, err := a.makeSignWithSha256(config.GuestTokenKey, body)
     if err != nil {
         //todo: error here
     }
@@ -58,7 +58,7 @@ func (a *Auth) VerifyGuestTokenData(token string) bool{
         return false
     }
 
-    realSign, err := a.makeSignWithShad256(config.GuestTokenKey, body)
+    realSign, err := a.makeSignWithSha256(config.GuestTokenKey, body)
     if err != nil {
         //todo: error here
     }
@@ -93,7 +93,7 @@ func (a * Auth) decodeBodyWithAes(key, padding, data []byte) (string, error) {
 }
 
 // 用sha256製作JWT的簽名
-func (a *Auth) makeSignWithShad256(key, body string) (string, error){
+func (a *Auth) makeSignWithSha256(key, body string) (string, error){
     hashData := &core.CommonHashData{
         Content: body,
         Key: key,
