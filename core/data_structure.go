@@ -1,5 +1,11 @@
 package core
 
+const (
+    AppErrorDebugStatus = "debug"
+    AppErrorInfoStatus = "info"
+    AppErrorExceptionStatus = "exception"
+    AppErrorAlertStatus = "alert"
+)
 
 const (
     MatchingActionKey = "Matching"
