@@ -39,23 +39,23 @@ func InArray(val interface{}, array interface{}) (exists bool, index int) {
 // 若輸入的[]byte無法被 json.Marshal 處理，回傳error
 func DecodeCommonData(s []byte) (*CommonData, error) {
     if s == nil {
-        return nil, CommonError("DecodeCommonData", "nil", errors.New("nil input"))
+        return nil, errors.New("nil input")
     }
     var result, empty CommonData
     err := json.Unmarshal(s, &result)
     if err != nil {
-        return nil, CommonError("DecodeCommonData", s, err)
+        return nil, err
     }
     // 如果結果是empty，需要檢查輸入資料的格式是否為CommonData格式
     // 因為 json.Unmarshal 當輸入無法解讀的格式，會回傳空的CommonData
     if result == empty {
         resultByte, err := json.Marshal(result)
         if err != nil {
-            return nil, CommonError("DecodeCommonData", s, err)
+            return nil, err
         }
         // 不相等代表輸入s的資料並非屬於CommonData格式
         if bytes.Compare(resultByte, s) != 0{
-            return nil, CommonError("DecodeCommonData", s, errors.New("input isn't type of CommonData"))
+            return nil, errors.New("bytes of input isn't a type of CommonData")
         }
     }
     return &result, nil
@@ -65,7 +65,7 @@ func DecodeCommonData(s []byte) (*CommonData, error) {
 func EncodeCommonDada(data *CommonData) ([]byte, error) {
     result, err := json.Marshal(data)
     if err != nil {
-        return nil, CommonError("DecodeCommonData", data, err)
+        return nil, err
     }
     return result, nil
 }
