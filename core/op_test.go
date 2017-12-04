@@ -40,9 +40,9 @@ func TestInArray(t *testing.T) {
 }
 
 type object2 struct{
-    p1 string
-    p2 int
-    p3 error
+    P1 string
+    P2 int
+    P3 error
 }
 
 func TestDecodeCommonData(t *testing.T) {
@@ -66,16 +66,16 @@ func TestDecodeCommonData(t *testing.T) {
         t.Fatalf("Fatal Error Test DecodeCommonData failed with  err: %s", err.Error())
     }
     inValidData1 := struct {
-        paramA string
-        paramB int
-        paramC *object2
+        ParamA string
+        ParamB int
+        ParamC *object2
     }{
-        paramA: "123",
-        paramB: 16,
-        paramC: &object2{
-            p1: "345",
-            p2: 60,
-            p3: errors.New(""),
+        ParamA: "123",
+        ParamB: 16,
+        ParamC: &object2{
+            P1: "345",
+            P2: 60,
+            P3: errors.New(""),
         },
     }
     invalidInput1, err := json.Marshal(inValidData1)
