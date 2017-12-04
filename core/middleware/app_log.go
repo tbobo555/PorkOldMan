@@ -5,12 +5,13 @@ import (
     "time"
 )
 
+// 類別 AppLog, 紀錄專案所有執行的訊息
 type AppLog struct {
     rootPath string
-    mailMap []string
 }
 
-func (l *AppLog) WriteLog(status, data string) {
+// 撰寫log到檔案裡面
+func (l *AppLog) WriteLog(status, data string) error{
     handler := &FileHandler{}
     switch status {
     case core.AppErrorDebugStatus:
@@ -23,18 +24,19 @@ func (l *AppLog) WriteLog(status, data string) {
     default:
         status = core.AppErrorInfoStatus
     }
-
-    handler.WriteFile(l.getLogPath(status), data)
+    fileName := l.getLogPath(status)
+    err := handler.CreateFile(fileName)
+    if err != nil {
+        return err
+    }
+    err = handler.WriteFile(fileName, data)
+    if err != nil {
+        return err
+    }
+    return nil
 }
 
-func (l *AppLog) SetMailer(mail string) {
-
-}
-
-func (l *AppLog) sendMail(data string) {
-
-}
-
+// 依據log狀態，取得目錄路徑
 func (l *AppLog) getLogPath(status string) string {
     dir := core.AppErrorInfoStatus
     switch status {
