@@ -7,7 +7,7 @@ import (
 
 // 類別 AppLog, 紀錄專案所有執行的訊息
 type AppLog struct {
-    rootPath string
+    RootPath string
 }
 
 // 撰寫log到檔案裡面
@@ -49,5 +49,5 @@ func (l *AppLog) getLogPath(status string) string {
     case core.AppErrorAlertStatus:
         dir = status
     }
-    return l.rootPath + "/" + dir + "/" + time.Now().UTC().Format("2006-01-02-15") + ".log"
+    return l.RootPath + "/" + dir + "/" + time.Now().UTC().Format("2006-01-02-15") + ".log"
 }

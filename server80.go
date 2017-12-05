@@ -5,11 +5,9 @@ import (
     "log"
     "porkoldman/core/controller"
     "github.com/gorilla/mux"
-    "porkoldman/core/block/downstairs"
 )
 
 func main() {
-    go downstairs.RunEngine()
     router := mux.NewRouter()
     // test example
     router.HandleFunc("/", controller.IndexServe)

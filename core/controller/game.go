@@ -19,7 +19,7 @@ func IoGameDownStairsServeSocket(writer http.ResponseWriter, request *http.Reque
     if err != nil {
         log.Panicln(err)
     }
-    newConn := downstairs.NewConnection(conn)
+    newConn := downstairs.NewConnection(conn, request)
     go newConn.ListenRead()
     go newConn.ListenWrite()
 }

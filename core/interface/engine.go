@@ -1,15 +1,13 @@
 package _interface
 
 type Engine interface {
-    Run()
-    GetConnection(s string) Connection
+    GetConnection(s string) (Connection, error)
     GetAllConnections() map[string] Connection
-    GetHub(s string) Hub
+    GetHub(s string) (Hub, error)
     GetAllHubs() map[string] Hub
-    AddConnection(conn Connection)
+    AddConnection(conn Connection) error
     RemoveConnection(conn Connection)
-    AddHub(hub Hub)
+    AddHub(hub Hub) error
     RemoveHub(hub Hub)
-    AllocateToHub(conn Connection)
-    Broadcast(connMap map[string] Connection)
+    AllocateToHub(conn Connection) error
 }

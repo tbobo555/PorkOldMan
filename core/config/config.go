@@ -6,4 +6,6 @@ const (
 
     // 珍珠奶茶不好喝====
     GuestUserIdEncodeKey = "NXAgNWogczkzdDg2MWo0Y2wzY2sg===="
+
+    LogRootPath = "/Users/patrick/Work/Web/Go/src/porkoldman/log"
 )

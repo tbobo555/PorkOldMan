@@ -17,6 +17,8 @@ const (
     StopActionKey = "Stop"
     AdjustActionKey = "Adjust"
     RefreshAllActionKey = "RefreshAll"
+)
+const (
     DefaultPadding = "="
 )
 
