@@ -21,7 +21,7 @@ func TestAppLog_WriteLog(t *testing.T) {
     }
 
     appLog := &AppLog{
-        rootPath: RootPath,
+        RootPath: RootPath,
     }
     fileHandler := &FileHandler{}
 

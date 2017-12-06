@@ -147,6 +147,9 @@ func (h *DoublePlayerHub) broadcastToRequester(commonData *core.CommonData) erro
     if err != nil {
         return err
     }
+    if  h.isValidRequestId(commonData.RequestPlayerId) == false {
+        errors.New("request id can't match host and guest")
+    }
     if h.Host != nil && commonData.RequestPlayerId == h.Host.GetConnectionId().String() {
         if h.Host.GetIsConnection() == true && h.Host.GetIsPageVisible() == true {
             err := h.sendToConnection(h.Host, data)
@@ -180,6 +183,9 @@ func (h *DoublePlayerHub) broadcastToHost(commonData *core.CommonData) error {
     if err != nil {
         return err
     }
+    if  h.isValidRequestId(commonData.RequestPlayerId) == false {
+        errors.New("request id can't match host and guest")
+    }
     if h.Host.GetIsConnection() == true && h.Host.GetIsPageVisible() == true {
         err := h.sendToConnection(h.Host, data)
         if err != nil {
@@ -201,6 +207,9 @@ func (h *DoublePlayerHub) broadcastToGuest(commonData *core.CommonData) error {
     if err != nil {
         return err
     }
+    if  h.isValidRequestId(commonData.RequestPlayerId) == false {
+        errors.New("request id can't match host and guest")
+    }
     if h.Guest != nil && h.Guest.GetIsConnection() == true && h.Guest.GetIsPageVisible() == true {
         err := h.sendToConnection(h.Guest, data)
         if err != nil {
@@ -221,6 +230,9 @@ func (h *DoublePlayerHub) broadcastToAll(commonData *core.CommonData) error {
     data, err := core.EncodeCommonDada(commonData)
     if err != nil {
         return err
+    }
+    if  h.isValidRequestId(commonData.RequestPlayerId) == false {
+        errors.New("request id can't match host and guest")
     }
     if h.Host != nil && h.Host.GetIsConnection() == true && h.Host.GetIsPageVisible() == true {
         err := h.sendToConnection(h.Host, data)
@@ -263,4 +275,15 @@ func (h *DoublePlayerHub) sendToConnection(conn _interface.Connection, data []by
         return errors.New("write to channel timeout")
     }
     return errors.New("unknown channel be launched")
+}
+
+// 檢查 request id 是否合法
+func (h *DoublePlayerHub) isValidRequestId (requestId string) bool {
+    if h.Guest != nil && requestId == h.Guest.GetConnectionId().String(){
+        return true
+    }
+    if h.Host != nil && requestId == h.Host.GetConnectionId().String(){
+        return true
+    }
+    return false
 }
