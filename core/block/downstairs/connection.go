@@ -13,24 +13,6 @@ import (
     "fmt"
 )
 
-const (
-    // 將資料傳送至客戶端的最大等待時間
-    writeWait = 10 * time.Second
-
-    // 從客戶端接收ping的最大等候時間
-    pongWait = 60 * time.Second
-
-    // 固定傳送ping資料給客戶端的時間間隔
-    pingPeriod = (pongWait * 9) / 10
-
-    // 接收/傳送資料的最大容量
-    maxMessageSize = 512
-
-    // 從客戶端接收操作行為及畫面資料的最大等候時間
-    // 若超過此時間Server都沒有接收到資料代表玩家隱藏或縮小遊戲畫面或是網路狀態不穩
-    maxReaderWaitingPeriod = 1.5
-)
-
 // 類別downstairs.Connection，當玩家連線到遊戲downstairs時，
 // 會為該玩家創建一個此類別的物件，用來儲存與操作該玩家的所有資料與行為
 type Connection struct {
@@ -75,7 +57,7 @@ func NewConnection(conn *websocket.Conn, request *http.Request) *Connection{
         request: request,
         hub: nil,
         writeChannel: make(chan []byte),
-        visibleDetector: element.NewVisibleDetector(maxReaderWaitingPeriod),
+        visibleDetector: element.NewVisibleDetector(core.DownStairsMaxReaderWaitingPeriod),
         mainPlayerId: uuid.NewV4(),
         isMatching: false,
         isMatched: false,
@@ -137,9 +119,12 @@ func (c *Connection) ListenRead() {
         c.Close()
     }()
     conn := c.socketConnect
-    conn.SetReadLimit(maxMessageSize)
-    conn.SetReadDeadline(time.Now().Add(pongWait))
-    conn.SetPongHandler(func(string) error { conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+    conn.SetReadLimit(core.DownStairsMaxMessageSize)
+    conn.SetReadDeadline(time.Now().Add(core.DownStairsPongWait))
+    conn.SetPongHandler(func(string) error {
+        conn.SetReadDeadline(time.Now().Add(core.DownStairsPongWait))
+        return nil
+    })
     for {
         c.visibleDetector.Reset()
         _, socketJsonData, err := conn.ReadMessage()
@@ -186,7 +171,7 @@ func (c *Connection) ListenRead() {
 
 // 監聽是否有資料要傳送至客戶端
 func (c *Connection) ListenWrite() {
-    ticker := time.NewTicker(pingPeriod)
+    ticker := time.NewTicker(core.DownStairsPingPeriod)
     defer func() {
         ticker.Stop()
         c.Close()
@@ -195,7 +180,7 @@ func (c *Connection) ListenWrite() {
     for {
         select {
         case writeData, ok := <- c.writeChannel:
-            conn.SetWriteDeadline(time.Now().Add(writeWait))
+            conn.SetWriteDeadline(time.Now().Add(core.DownStairsWriteWait))
             // 若 writeChannel 已被關閉，ok 會是 false
             if !ok {
                 conn.WriteMessage(websocket.CloseMessage, []byte{})
@@ -215,11 +200,12 @@ func (c *Connection) ListenWrite() {
                 c.WriteError(core.AppErrorExceptionStatus, err.Error())
                 return
             }
+        // 固定時間發 ping 來偵測連線是否已關閉，若關閉則結束此for迴圈
         case <-ticker.C:
-            conn.SetWriteDeadline(time.Now().Add(writeWait))
+            conn.SetWriteDeadline(time.Now().Add(core.DownStairsWriteWait))
             if err := conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
                 //fmt.Println(7)
-                //c.WriteError(core.AppErrorExceptionStatus, err.Error())
+                //c.WriteError(core.AppErrorInfoStatus, err.Error())
                 return
             }
         }
@@ -320,7 +306,12 @@ func (c *Connection) onAction(commonData *core.CommonData) {
             guest.X = commonData.GuestX
             guest.Y = commonData.GuestY
         }
-        c.hub.Broadcast(commonData)
+        err = c.hub.Broadcast(commonData)
+        if err != nil {
+            fmt.Println(17.1)
+            c.WriteError(core.AppErrorExceptionStatus, err.Error())
+            return
+        }
     } else if commonData.RequestPlayerId == commonData.GuestId {
         c.X = commonData.GuestX
         c.Y = commonData.GuestY
@@ -334,7 +325,12 @@ func (c *Connection) onAction(commonData *core.CommonData) {
             host.X = commonData.HostX
             host.Y = commonData.HostY
         }
-        c.hub.Broadcast(commonData)
+        err = c.hub.Broadcast(commonData)
+        if err != nil {
+            fmt.Println(18.1)
+            c.WriteError(core.AppErrorExceptionStatus, err.Error())
+            return
+        }
     } else {
         fmt.Println(19)
         c.WriteError(core.AppErrorInfoStatus, "get undefined request player id ")
@@ -382,7 +378,11 @@ func (c *Connection) onRefreshAll(commonData *core.CommonData) {
         GuestX: guest.X,
         GuestY: guest.Y,
     }
-    c.hub.Broadcast(refreshData)
+    err = c.hub.Broadcast(refreshData)
+    if err != nil {
+        fmt.Println(23)
+        c.WriteError(core.AppErrorExceptionStatus, err.Error())
+    }
 }
 
 // 寫log紀錄

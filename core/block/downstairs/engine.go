@@ -92,8 +92,17 @@ func (e *Engine) AllocateToHub (conn _interface.Connection) error{
         if err != nil {
             return  err
         }
-        if doublePlayerHub == nil || doublePlayerHub.IsAllConnectionsDisconnect() {
+        if doublePlayerHub == nil {
             delete(e.hubs, key)
+            continue
+        }
+        if doublePlayerHub.IsAllConnectionsDisconnect() {
+            if doublePlayerHub.Host != nil {
+                doublePlayerHub.Host.Close()
+            }
+            if doublePlayerHub.Guest != nil {
+                doublePlayerHub.Guest.Close()
+            }
             continue
         }
         if doublePlayerHub.Host != nil && doublePlayerHub.Host.GetIsConnection() && doublePlayerHub.Guest == nil {
@@ -101,20 +110,29 @@ func (e *Engine) AllocateToHub (conn _interface.Connection) error{
             downstairsConn.SetHub(doublePlayerHub)
             e.AddConnection(downstairsConn)
             found = true
-            go e.broadcastMatched(downstairsConn)
-            go e.broadcastStart(downstairsConn)
+            err = e.broadcastMatched(downstairsConn)
+            if err != nil {
+                return  err
+            }
+            err = e.broadcastStart(downstairsConn)
+            if err != nil {
+                return  err
+            }
         }
         if found {
             break
         }
     }
     if found == false {
-        newHub := element.NewDoublePlayerHub(MainDownstairsEngine)
+        newHub := element.NewDoublePlayerHub()
         e.AddHub(newHub)
         e.AddConnection(downstairsConn)
         downstairsConn.SetHub(newHub)
         newHub.Host = downstairsConn
-        go e.broadcastMatching(downstairsConn)
+        err = e.broadcastMatching(downstairsConn)
+        if err != nil {
+            return  err
+        }
     }
     return nil
 }

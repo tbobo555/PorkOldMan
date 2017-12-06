@@ -6,26 +6,27 @@ import (
     "porkoldman/core"
     "errors"
     "text/template"
+    "time"
 )
 
 // DoublePlayerHub類別，代表雙人對戰使用的hub
 // 此hub只能容納兩個玩家的連線，分別命名為host與guest
 type DoublePlayerHub struct {
     hubId uuid.UUID
-    mainEngine _interface.Engine
     connections map[string] _interface.Connection
     Host _interface.Connection
     Guest _interface.Connection
+    MaxBroadcastWaitTime time.Duration
 }
 
 // 創建一個新的DoublePlayerHub物件
-func NewDoublePlayerHub(mainEngine _interface.Engine) *DoublePlayerHub{
+func NewDoublePlayerHub() *DoublePlayerHub{
     return &DoublePlayerHub{
         hubId: uuid.NewV4(),
-        mainEngine: mainEngine,
         connections: make(map[string] _interface.Connection),
         Host: nil,
         Guest: nil,
+        MaxBroadcastWaitTime: core.DefaultChannelSendWait,
     }
 }
 
@@ -41,7 +42,6 @@ func (h *DoublePlayerHub) GetConnection(s string) (_interface.Connection, error)
     } else {
         return nil, errors.New("no connection with key: " + template.HTMLEscapeString(s))
     }
-    return h.connections[s], nil
 }
 
 // 取得所有在此hub中的連線
@@ -51,6 +51,9 @@ func (h *DoublePlayerHub) GetAllConnections() map[string] _interface.Connection{
 
 // 新增一組連線
 func (h *DoublePlayerHub) AddConnection (conn _interface.Connection) error {
+    if conn == nil || conn.GetConnectionId() == uuid.Nil {
+        return errors.New("try to add a nil connection to hub")
+    }
     if _, ok := h.connections[conn.GetConnectionId().String()]; ok {
         return errors.New("already set connection with id : " + template.HTMLEscapeString(conn.GetConnectionId().String()))
     }
@@ -133,7 +136,7 @@ func (h *DoublePlayerHub) Broadcast(data interface{}) error{
 }
 
 // 將資料發佈至發送請求的使用者
-func (h *DoublePlayerHub) broadcastToRequester(commonData *core.CommonData) (err error) {
+func (h *DoublePlayerHub) broadcastToRequester(commonData *core.CommonData) error {
     if commonData == nil {
         return errors.New("broadcast with nil data")
     }
@@ -144,28 +147,21 @@ func (h *DoublePlayerHub) broadcastToRequester(commonData *core.CommonData) (err
     if err != nil {
         return err
     }
-    // 若發生panic錯誤，將錯誤回傳
-    defer func() {
-        if r := recover(); r != nil {
-            switch x := r.(type) {
-            case string:
-                err = errors.New(x)
-            case error:
-                err = x
-            default:
-                err = errors.New("unknown panic when broadcast to write channel")
-            }
-        }
-    }()
     if h.Host != nil && commonData.RequestPlayerId == h.Host.GetConnectionId().String() {
         if h.Host.GetIsConnection() == true && h.Host.GetIsPageVisible() == true {
-            h.Host.GetWriteChannel() <- data
+            err := h.sendToConnection(h.Host, data)
+            if err != nil {
+                return err
+            }
         }
         return nil
     }
     if h.Guest != nil && commonData.RequestPlayerId == h.Guest.GetConnectionId().String() {
         if h.Guest.GetIsConnection() == true && h.Guest.GetIsPageVisible() == true {
-            h.Guest.GetWriteChannel() <- data
+            err := h.sendToConnection(h.Guest, data)
+            if err != nil {
+                return err
+            }
         }
         return nil
     }
@@ -173,7 +169,7 @@ func (h *DoublePlayerHub) broadcastToRequester(commonData *core.CommonData) (err
 }
 
 // 將資料發佈至host
-func (h *DoublePlayerHub) broadcastToHost(commonData *core.CommonData) (err error) {
+func (h *DoublePlayerHub) broadcastToHost(commonData *core.CommonData) error {
     if commonData == nil {
         return errors.New("broadcast with nil data")
     }
@@ -184,27 +180,17 @@ func (h *DoublePlayerHub) broadcastToHost(commonData *core.CommonData) (err erro
     if err != nil {
         return err
     }
-    // 若發生panic錯誤，將錯誤回傳
-    defer func() {
-        if r := recover(); r != nil {
-            switch x := r.(type) {
-            case string:
-                err = errors.New(x)
-            case error:
-                err = x
-            default:
-                err = errors.New("unknown panic when broadcast to write channel")
-            }
-        }
-    }()
     if h.Host.GetIsConnection() == true && h.Host.GetIsPageVisible() == true {
-        h.Host.GetWriteChannel() <- data
+        err := h.sendToConnection(h.Host, data)
+        if err != nil {
+            return err
+        }
     }
     return nil
 }
 
 // 將資料發佈至guest
-func (h *DoublePlayerHub) broadcastToGuest(commonData *core.CommonData) (err error) {
+func (h *DoublePlayerHub) broadcastToGuest(commonData *core.CommonData) error {
     if commonData == nil {
         return errors.New("broadcast with nil data")
     }
@@ -215,27 +201,17 @@ func (h *DoublePlayerHub) broadcastToGuest(commonData *core.CommonData) (err err
     if err != nil {
         return err
     }
-    // 若發生panic錯誤，將錯誤回傳
-    defer func() {
-        if r := recover(); r != nil {
-            switch x := r.(type) {
-            case string:
-                err = errors.New(x)
-            case error:
-                err = x
-            default:
-                err = errors.New("unknown panic when broadcast to write channel")
-            }
-        }
-    }()
     if h.Guest != nil && h.Guest.GetIsConnection() == true && h.Guest.GetIsPageVisible() == true {
-        h.Guest.GetWriteChannel() <- data
+        err := h.sendToConnection(h.Guest, data)
+        if err != nil {
+            return err
+        }
     }
     return nil
 }
 
 // 將資料發佈至所有連線中的使用者
-func (h *DoublePlayerHub) broadcastToAll(commonData *core.CommonData) (err error) {
+func (h *DoublePlayerHub) broadcastToAll(commonData *core.CommonData) error {
     if commonData == nil {
         return errors.New("broadcast with nil data")
     }
@@ -246,6 +222,27 @@ func (h *DoublePlayerHub) broadcastToAll(commonData *core.CommonData) (err error
     if err != nil {
         return err
     }
+    if h.Host != nil && h.Host.GetIsConnection() == true && h.Host.GetIsPageVisible() == true {
+        err := h.sendToConnection(h.Host, data)
+        if err != nil {
+            return err
+        }
+    }
+    if h.Guest != nil && h.Guest.GetIsConnection() == true && h.Guest.GetIsPageVisible() == true {
+        err := h.sendToConnection(h.Guest, data)
+        if err != nil {
+            return err
+        }
+    }
+    return nil
+}
+
+// 將要發佈的資料透過 channel 傳送至相關的連線
+func (h *DoublePlayerHub) sendToConnection(conn _interface.Connection, data []byte) (err error) {
+    if conn == nil || data == nil {
+        return errors.New("send data with nil")
+    }
+
     // 若發生panic錯誤，將錯誤回傳
     defer func() {
         if r := recover(); r != nil {
@@ -259,11 +256,11 @@ func (h *DoublePlayerHub) broadcastToAll(commonData *core.CommonData) (err error
             }
         }
     }()
-    if h.Host != nil && h.Host.GetIsConnection() == true && h.Host.GetIsPageVisible() == true {
-        h.Host.GetWriteChannel() <- data
+    select {
+    case conn.GetWriteChannel() <- data:
+        return nil
+    case <-time.After(h.MaxBroadcastWaitTime):
+        return errors.New("write to channel timeout")
     }
-    if h.Guest != nil && h.Guest.GetIsConnection() == true && h.Guest.GetIsPageVisible() == true {
-        h.Guest.GetWriteChannel() <- data
-    }
-    return nil
+    return errors.New("unknown channel be launched")
 }
