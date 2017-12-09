@@ -61,6 +61,28 @@ this is some info to read!
     }
 }
 
+func TestFileHandler_CoverFile(t *testing.T) {
+    err := cleanTestFile()
+    if err != nil {
+        t.Fatalf("Test FileHandler.CoverFile failed, can't clean the test file, get error: %s", err)
+    }
+    input := `test text!
+text text2`
+    input2 := "123"
+    expect := `123
+`
+    h := FileHandler{}
+    h.CoverFile("file_for_unit_test.file", input, true)
+    h.CoverFile("file_for_unit_test.file", input2, true)
+    content, err := h.ReadFile("file_for_unit_test.file")
+    if err != nil {
+        t.Fatalf("Test FileHandler.WriteFile failed in first test, error: %s", err.Error())
+    }
+    if strings.Compare(string(content), expect) != 0{
+        t.Errorf("Test FileHandler.WriteFile failed in first test, no get expect output")
+    }
+}
+
 func TestFileHandler_WriteFile(t *testing.T) {
     //------------first test
     input := `test text!
@@ -70,7 +92,7 @@ text text2
 `
     err := cleanTestFile()
     if err != nil {
-        t.Fatalf("Test FileHandler.WriteFile failed in first test, can't clean the test file")
+        t.Fatalf("Test FileHandler.WriteFile failed in first test, can't clean the test file, get error: %s", err)
     }
     h := FileHandler{}
     err = h.WriteFile("file_for_unit_test.file", input)
@@ -159,11 +181,8 @@ func initFile() error {
 
 func cleanTestFile() error {
     h := FileHandler{}
-    err := h.DeleteFile("file_for_unit_test.file")
-    if err != nil {
-        return err
-    }
-    err = h.CreateFile("file_for_unit_test.file")
+    h.DeleteFile("file_for_unit_test.file")
+    err := h.CreateFile("file_for_unit_test.file")
     if err != nil {
         return err
     }

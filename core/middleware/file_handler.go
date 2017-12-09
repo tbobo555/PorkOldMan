@@ -4,7 +4,11 @@ import (
     "os"
     "strings"
     "io"
+    "sync"
+    "io/ioutil"
 )
+
+var fileMutex sync.RWMutex
 
 type FileHandler struct {}
 
@@ -29,6 +33,16 @@ func (f *FileHandler) CreateFile(path string) error {
     return nil
 }
 
+// 將原始檔案的資料清空，並以新資料寫入
+func (f *FileHandler) CoverFile(path string, text string, wrap bool) error {
+    fileMutex.Lock()
+    defer fileMutex.Unlock()
+    if wrap {
+        text = text + "\n"
+    }
+    return ioutil.WriteFile(path, []byte(text), 0644)
+}
+
 // 將資料寫入檔案(添加在檔案末端)，寫完後會自動換行
 func (f *FileHandler) WriteFile(path string, text string) error {
     var file, err = os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0644)
@@ -37,6 +51,8 @@ func (f *FileHandler) WriteFile(path string, text string) error {
     }
     defer file.Close()
     lines := strings.Split(text, "\n")
+    fileMutex.Lock()
+    defer fileMutex.Unlock()
     for _, line := range lines {
         _, err = file.WriteString(line + "\n")
         if err != nil {
@@ -53,6 +69,9 @@ func (f *FileHandler) WriteFile(path string, text string) error {
 
 // 刪除檔案
 func (f *FileHandler) DeleteFile(path string) error {
+    fileMutex.RLock()
+    defer fileMutex.RUnlock()
+
     var err = os.Remove(path)
     if err != nil {
         return  err
@@ -62,6 +81,9 @@ func (f *FileHandler) DeleteFile(path string) error {
 
 // 讀取檔案
 func (f *FileHandler) ReadFile(path string) ([]byte, error) {
+    fileMutex.RLock()
+    defer fileMutex.RUnlock()
+
     // open file
     var file, err = os.OpenFile(path, os.O_RDWR, 0644)
     if err != nil {
