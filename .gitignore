@@ -18,3 +18,5 @@ DerivedData/
 # Ignore files built by AppCode
 .idea/
 
+#Ignore go secret file
+config.go
