@@ -98,7 +98,8 @@ var DownStairs = DownStairs || {
  */
 DownStairs.Engine = function(conn) {
 
-    conn = conn || new WebSocket("ws://" + document.location.host + "/io/game/downstairs");
+    conn = conn || new WebSocket("ws://" + document.location.host + "/io/game/downstairs/"
+        + document.getElementById("rt").innerText.trim());
 
     /**
      * @property {WebSocket} webSocketConn - WebSocket連線物件
@@ -474,8 +475,9 @@ DownStairs.Engine.prototype = {
     }
 };
 
-var engine = new DownStairs.Engine();
+var engine;
 window.onload = function () {
+    engine = new DownStairs.Engine();
     startVisibleListener();
     if (window["WebSocket"]) {
         engine.run();

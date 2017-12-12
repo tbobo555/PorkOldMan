@@ -5,6 +5,7 @@ import (
     "errors"
     "encoding/json"
     "bytes"
+    "fmt"
 )
 
 type object struct{
@@ -211,5 +212,20 @@ func TestEncodeCommonDada(t *testing.T) {
             t.Errorf("Test EncodeCommonDada failed with input %s, expect (%s, %s), get (%s, %s)",
                 test.input, test.exp, "nil", result, err)
         }
+    }
+}
+
+func TestMakeRandomContext(t *testing.T) {
+    c1, err := MakeRandomContext(32)
+    if err !=nil {
+        t.Errorf("Test new MakeRandomContext failed, get error : %s", err.Error())
+    }
+    fmt.Println(c1)
+    c2, err := MakeRandomContext(32)
+    if err !=nil {
+        t.Errorf("Test new MakeRandomContext failed, get error : %s", err.Error())
+    }
+    if c1 == c2 {
+        t.Errorf("Test new MakeRandomContext failed, get same context")
     }
 }

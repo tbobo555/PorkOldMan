@@ -5,7 +5,15 @@ import (
     "encoding/json"
     "bytes"
     "errors"
+    "encoding/base64"
+    "math/rand"
+    "time"
+    "net/http"
 )
+
+func init() {
+    rand.Seed(time.Now().UTC().UnixNano())
+}
 
 // 檢查val是否存在array或slice裡面
 // 如果有則回傳 true & 陣列索引編號
@@ -68,4 +76,52 @@ func EncodeCommonDada(data *CommonData) ([]byte, error) {
         return nil, err
     }
     return result, nil
+}
+
+// 亂數產生一組指定長度的字串，該長度介於1~1024間
+func MakeRandomContext(length int) (string, error) {
+    if length < 1 {
+        return "", errors.New("length input can't less than 1")
+    }
+    if length > 1024 {
+        return "", errors.New("length input can't more than 1024")
+    }
+    lower := "abcdefghijklmnopqrstuvwxyz"
+    upper := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    digit := "0123456789"
+    all := lower + upper + digit
+    lenAll := len(all)
+    k := make([]byte, length)
+    for i := 0; i < length; i++ {
+        b := all[rand.Intn(lenAll)]
+        k[i] = b
+    }
+    return base64.URLEncoding.EncodeToString(k), nil
+}
+
+// 產生一組cookie物件
+func NewCookie(name, value, path, domain string, maxAge int, secure, httpOnly bool) *http.Cookie {
+    cookie := &http.Cookie {
+        Name:     name,
+        Value:    value,
+        Path:     path,
+        Domain:   domain,
+        MaxAge:   maxAge,
+        Secure:   secure,
+        HttpOnly: httpOnly,
+    }
+    if maxAge > 0 {
+        d := time.Duration(maxAge) * time.Second
+        cookie.Expires = time.Now().Add(d)
+    } else if maxAge < 0 {
+        cookie.Expires = time.Unix(1, 0)
+    }
+    return cookie
+}
+
+// 從server刪除client端的一組cookie
+func DeleteCookie (writer http.ResponseWriter, name string) {
+    cookie := NewCookie(name, "", "", "",
+        -1, false, true)
+    http.SetCookie(writer, cookie)
 }

@@ -15,7 +15,7 @@ func main() {
 
     // game downstairs router
     router.HandleFunc("/game/downstairs", controller.GameDownStairsServeGet).Methods("GET")
-    router.HandleFunc("/io/game/downstairs", controller.IoGameDownStairsServeSocket).Methods("GET").
+    router.HandleFunc("/io/game/downstairs/{token}", controller.IoGameDownStairsServeSocket).Methods("GET").
         Headers("Connection", "Upgrade").Headers("Upgrade", "websocket")
     router.PathPrefix("/game/assets/").Handler(http.StripPrefix("/game/", http.FileServer(http.Dir("./public"))))
     http.Handle("/", router)

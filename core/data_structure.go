@@ -20,6 +20,16 @@ const (
     AdjustActionKey = "Adjust"
     RefreshAllActionKey = "RefreshAll"
 )
+
+const (
+    SessionIdCookieName = "dll"
+)
+
+const (
+    JsonTokenType = "json"
+    TextTokenType = "text"
+)
+
 const (
     DefaultPadding = "="
 )
