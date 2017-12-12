@@ -7,7 +7,7 @@ import (
     "bytes"
     "reflect"
     "time"
-    "fmt"
+    "porkoldman/core"
 )
 
 func NewRecorder() *httptest.ResponseRecorder {
@@ -18,17 +18,15 @@ func NewRecorder() *httptest.ResponseRecorder {
 }
 
 func TestNewSession(t *testing.T) {
-    var rsp *httptest.ResponseRecorder
-    rsp = NewRecorder()
     sm := NewSessionManager()
-    sess, err := sm.New(rsp, "test session")
+    sess, err := sm.New()
     if err != nil {
         t.Fatalf("Fatal Error Test SessionManager.New, get error: %s", err.Error())
     }
     sess.Option.MaxAge = 600
     sess.Option.Domain = "www.ggg.com"
     sess.Values["a13"] = "it is a text for testing"
-    err = sess.Save(rsp)
+    err = sess.Save()
     if err != nil {
         t.Fatalf("Fatal Error Test SessionManager.Save, get error: %s", err.Error())
     }
@@ -37,9 +35,6 @@ func TestNewSession(t *testing.T) {
         t.Fatalf("Fatal Error Test SessionManager.Get, get error: %s", err.Error())
     }
     if result.ID != sess.ID {
-        t.Errorf("Error Test SessionManager.Get, get unexpected result")
-    }
-    if result.Name != sess.Name {
         t.Errorf("Error Test SessionManager.Get, get unexpected result")
     }
     if result.Option.MaxAge != 600 {
@@ -55,7 +50,7 @@ func TestNewSession(t *testing.T) {
         t.Errorf("Error Test SessionManager.Get, get unexpected result")
     }
     sess.Option.MaxAge = -1
-    err = sess.Save(rsp)
+    err = sess.Save()
     if err != nil {
         t.Fatalf("Fatal Error Test SessionManager.Save for delete session, get error: %s", err.Error())
     }
@@ -73,10 +68,9 @@ func TestGetSessionFromFile(t *testing.T) {
         Secure: false,
         HttpOnly: true,
     }
-    expectName := "test session"
-    expectId := "016960e8e82569af0397b68eb6570e1e040e08f40a052e3fedabb7551b70dbe9"
+    expectId := "b24c6147a0303cab0f33d854ff6b86d4693fac95f9e55ae7ce938afe2ab56dfb"
     sm := NewSessionManager()
-    sess, err := sm.Get("for_unit_test")
+    sess, err := sm.Get("se3853_unit_test_3853se")
     if err != nil {
         t.Fatalf("Fatal Error Test SessionManager.Get from, get error: %s", err.Error())
     }
@@ -87,9 +81,6 @@ func TestGetSessionFromFile(t *testing.T) {
         t.Errorf("Error Test SessionManager.Get from file, get unexpected result")
     }
     if sess.ID != expectId {
-        t.Errorf("Error Test SessionManager.Get from file, get unexpected result")
-    }
-    if sess.Name != expectName {
         t.Errorf("Error Test SessionManager.Get from file, get unexpected result")
     }
 }
@@ -112,7 +103,6 @@ func TestSessionCodec_Encode(t *testing.T) {
     }
     session = &Session{
         ID: "test ID",
-        Name: "test Name",
         Values: make(map[string] string),
         Option:&Option{
             Path:   "/",
@@ -162,7 +152,7 @@ func TestStoreFile_Get(t *testing.T) {
     if err == nil {
         t.Errorf("Error Test StoreFile.Get, empty string input, but no get error")
     }
-    longInput, err := MakeRandomContext(513)
+    longInput, err := core.MakeRandomContext(513)
     if err != nil {
         t.Errorf("Error Test StoreFile.Get, can't get long input to test, get error: %s", err.Error())
     }
@@ -178,14 +168,12 @@ func TestStoreFile_Get(t *testing.T) {
 
 func TestStoreFile_Save(t *testing.T) {
     sf := &StoreFile{}
-    err := sf.Save(nil, nil)
+    err := sf.Save( nil)
     if err == nil {
         t.Errorf("Error Test StoreFile.Get, nil input, but no get error")
     }
-    rsp := NewRecorder()
     session := &Session{
         ID: "",
-        Name: "test Name",
         Values: make(map[string] string),
         manager: NewSessionManager(),
         Option: &Option{
@@ -196,20 +184,15 @@ func TestStoreFile_Save(t *testing.T) {
         },
         life: time.Now().UTC(),
     }
-    err =sf.Save(nil, session)
+    err =sf.Save(session)
     if err == nil {
-        t.Errorf("Error Test StoreFile.Get, invalid session id and nil writer, but no get error")
+        t.Errorf("Error Test StoreFile.Get, invalid session id, but no get error")
     }
     session.ID = "it is a test id"
-    err =sf.Save(nil, session)
-    if err == nil {
-        t.Errorf("Error Test StoreFile.Get, nil writer, but no get error")
-    }
-    err =sf.Save(rsp, session)
+    err = sf.Save(session)
     if err == nil {
         t.Errorf("Error Test StoreFile.Get, empty codec and handler, but no get error")
     }
-    fmt.Println(err)
 }
 
 func TestStoreFile_Delete(t *testing.T) {
@@ -218,7 +201,7 @@ func TestStoreFile_Delete(t *testing.T) {
     if err == nil {
         t.Errorf("Error Test StoreFile.Delete, empty string input, but no get error")
     }
-    longInput, err := MakeRandomContext(513)
+    longInput, err := core.MakeRandomContext(513)
     if err != nil {
         t.Errorf("Error Test StoreFile.Delete, can't get long input to test, get error: %s", err.Error())
     }
