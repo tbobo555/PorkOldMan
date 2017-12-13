@@ -7,6 +7,19 @@ import (
     "net/http"
 )
 
+func WriteError(status, err string, request *http.Request) {
+    switch status {
+    case core.AppErrorDebugStatus:
+        go AppDebug(err, request)
+    case core.AppErrorInfoStatus:
+        go AppInfo(err, request)
+    case core.AppErrorExceptionStatus:
+        go AppException(err, request)
+    case core.AppErrorAlertStatus:
+        go AppAlert(err, request)
+    }
+}
+
 func AppDebug(err string, r *http.Request) {
     logger := middleware.AppLog{
         RootPath: config.LogRootPath,

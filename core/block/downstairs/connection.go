@@ -9,7 +9,7 @@ import (
     "porkoldman/core"
     "encoding/json"
     "net/http"
-    "porkoldman/core/log"
+    "porkoldman/core/middleware/log"
     "fmt"
 )
 
@@ -107,7 +107,7 @@ func (c *Connection) GetHub() _interface.Hub {
 func (c *Connection) SetHub(hub _interface.Hub)  {
     doublePlayerHub, err := MainDownstairsEngine.convertHub(hub)
     if err != nil {
-        c.WriteError(core.AppErrorExceptionStatus, err.Error())
+        log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
         return
     }
     c.hub = doublePlayerHub
@@ -132,7 +132,7 @@ func (c *Connection) ListenRead() {
         if err != nil {
             if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
                 fmt.Println(1)
-                c.WriteError(core.AppErrorExceptionStatus, err.Error())
+                log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
             } else {
                 //fmt.Println(2)
                 //c.WriteError(core.AppErrorInfoStatus, err.Error())
@@ -143,7 +143,7 @@ func (c *Connection) ListenRead() {
         err = json.Unmarshal(socketJsonData, commonData)
         if err != nil {
             fmt.Println(3)
-            c.WriteError(core.AppErrorExceptionStatus, err.Error())
+            log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
             break
         }
         switch commonData.ActionType {
@@ -185,19 +185,19 @@ func (c *Connection) ListenWrite() {
             if !ok {
                 conn.WriteMessage(websocket.CloseMessage, []byte{})
                 fmt.Println(4)
-                c.WriteError(core.AppErrorInfoStatus, "send close web socket connect")
+                log.WriteError(core.AppErrorInfoStatus, "send close web socket connect", c.request)
                 return
             }
             writer, err := conn.NextWriter(websocket.TextMessage)
             if err != nil {
                 fmt.Println(5)
-                c.WriteError(core.AppErrorExceptionStatus, err.Error())
+                log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
                 return
             }
             writer.Write(writeData)
             if err := writer.Close(); err != nil {
                 fmt.Println(6)
-                c.WriteError(core.AppErrorExceptionStatus, err.Error())
+                log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
                 return
             }
         // 固定時間發 ping 來偵測連線是否已關閉，若關閉則結束此for迴圈
@@ -230,18 +230,18 @@ func (c *Connection) Close() {
 func (c *Connection) onMatching() {
     if c.isMatching == true || c.isMatched == true {
         fmt.Println(8)
-        c.WriteError(core.AppErrorInfoStatus, "get repeat matching")
+        log.WriteError(core.AppErrorInfoStatus, "get repeat matching", c.request)
         return
     }
     if c.IsAllocated() == true {
         fmt.Println(9)
-        c.WriteError(core.AppErrorExceptionStatus, "conn is allocated, with no matching")
+        log.WriteError(core.AppErrorExceptionStatus, "conn is allocated, with no matching", c.request)
         return
     }
     err := MainDownstairsEngine.AllocateToHub(c)
     if err != nil {
         fmt.Println(10)
-        c.WriteError(core.AppErrorExceptionStatus, err.Error())
+        log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
         return
     }
     c.isMatching = true
@@ -251,17 +251,17 @@ func (c *Connection) onMatching() {
 func (c *Connection) onMatched() {
     if c.isMatched == true{
         fmt.Println(11)
-        c.WriteError(core.AppErrorInfoStatus, "get repeat matched")
+        log.WriteError(core.AppErrorInfoStatus, "get repeat matched", c.request)
         return
     }
     if c.isMatching != true {
         fmt.Println(12)
-        c.WriteError(core.AppErrorExceptionStatus, "get matched when no matching")
+        log.WriteError(core.AppErrorExceptionStatus, "get matched when no matching", c.request)
         return
     }
     if c.IsAllocated() != true {
         fmt.Println(13)
-        c.WriteError(core.AppErrorExceptionStatus, "get matched when no allocate")
+        log.WriteError(core.AppErrorExceptionStatus, "get matched when no allocate", c.request)
         return
     }
     c.isMatched = true
@@ -272,12 +272,12 @@ func (c *Connection) onMatched() {
 func (c *Connection) onStart() {
     if c.isMatching != true {
         fmt.Println(14)
-        c.WriteError(core.AppErrorExceptionStatus, "get start when no matching")
+        log.WriteError(core.AppErrorExceptionStatus, "get start when no matching", c.request)
         return
     }
     if c.isMatched == true {
         fmt.Println(15)
-        c.WriteError(core.AppErrorExceptionStatus, "get start when already matched")
+        log.WriteError(core.AppErrorExceptionStatus, "get start when already matched", c.request)
         return
     }
     c.isMatched = true
@@ -289,7 +289,7 @@ func (c *Connection) onStart() {
 func (c *Connection) onAction(commonData *core.CommonData) {
     if c.isMatching != true || c.isMatched != true || c.IsAllocated() != true {
         fmt.Println(16)
-        c.WriteError(core.AppErrorExceptionStatus, "get action when game not start")
+        log.WriteError(core.AppErrorExceptionStatus, "get action when game not start", c.request)
         return
     }
     c.visibleDetector.Reset()
@@ -299,7 +299,7 @@ func (c *Connection) onAction(commonData *core.CommonData) {
         guest, err := MainDownstairsEngine.convertConnection(c.hub.Guest)
         if err != nil {
             fmt.Println(17)
-            c.WriteError(core.AppErrorExceptionStatus, err.Error())
+            log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
             return
         }
         if guest.visibleDetector.IsVisible == false {
@@ -309,7 +309,7 @@ func (c *Connection) onAction(commonData *core.CommonData) {
         err = c.hub.Broadcast(commonData)
         if err != nil {
             fmt.Println(17.1)
-            c.WriteError(core.AppErrorExceptionStatus, err.Error())
+            log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
             return
         }
     } else if commonData.RequestPlayerId == commonData.GuestId {
@@ -318,7 +318,7 @@ func (c *Connection) onAction(commonData *core.CommonData) {
         host, err := MainDownstairsEngine.convertConnection(c.hub.Host)
         if err != nil {
             fmt.Println(18)
-            c.WriteError(core.AppErrorExceptionStatus, err.Error())
+            log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
             return
         }
         if host.visibleDetector.IsVisible == false {
@@ -328,12 +328,12 @@ func (c *Connection) onAction(commonData *core.CommonData) {
         err = c.hub.Broadcast(commonData)
         if err != nil {
             fmt.Println(18.1)
-            c.WriteError(core.AppErrorExceptionStatus, err.Error())
+            log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
             return
         }
     } else {
         fmt.Println(19)
-        c.WriteError(core.AppErrorInfoStatus, "get undefined request player id ")
+        log.WriteError(core.AppErrorInfoStatus, "get undefined request player id ", c.request)
     }
 }
 
@@ -341,7 +341,7 @@ func (c *Connection) onAction(commonData *core.CommonData) {
 func (c *Connection) onRefreshAll(commonData *core.CommonData) {
     if c.isMatching != true || c.isMatched != true || c.IsAllocated() != true {
         fmt.Println(20)
-        c.WriteError(core.AppErrorExceptionStatus, "get refresh all action, when game not start")
+        log.WriteError(core.AppErrorExceptionStatus, "get refresh all action, when game not start", c.request)
         return
     }
 
@@ -350,21 +350,21 @@ func (c *Connection) onRefreshAll(commonData *core.CommonData) {
     hub, err := MainDownstairsEngine.convertHub(c.hub)
     if err != nil {
         fmt.Println(21)
-        c.WriteError(core.AppErrorExceptionStatus, err.Error())
+        log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
         return
     }
 
     host, err := MainDownstairsEngine.convertConnection(hub.Host)
     if err != nil {
         fmt.Println(22)
-        c.WriteError(core.AppErrorExceptionStatus, err.Error())
+        log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
         return
     }
 
     guest, err := MainDownstairsEngine.convertConnection(hub.Guest)
     if err != nil {
         fmt.Println(23)
-        c.WriteError(core.AppErrorExceptionStatus, err.Error())
+        log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
         return
     }
 
@@ -381,20 +381,7 @@ func (c *Connection) onRefreshAll(commonData *core.CommonData) {
     err = c.hub.Broadcast(refreshData)
     if err != nil {
         fmt.Println(23)
-        c.WriteError(core.AppErrorExceptionStatus, err.Error())
+        log.WriteError(core.AppErrorExceptionStatus, err.Error(), c.request)
     }
 }
 
-// 寫log紀錄
-func (c *Connection) WriteError(status, err string) {
-    switch status {
-    case core.AppErrorDebugStatus:
-        go log.AppDebug(err, c.request)
-    case core.AppErrorInfoStatus:
-        go log.AppInfo(err, c.request)
-    case core.AppErrorExceptionStatus:
-        go log.AppException(err, c.request)
-    case core.AppErrorAlertStatus:
-        go log.AppAlert(err, c.request)
-    }
-}

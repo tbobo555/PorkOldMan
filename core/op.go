@@ -125,3 +125,24 @@ func DeleteCookie (writer http.ResponseWriter, name string) {
         -1, false, true)
     http.SetCookie(writer, cookie)
 }
+
+// 顯示錯誤畫面，若輸入無法判別的status，則預設顯示bad request
+func ShowErrorPage(writer http.ResponseWriter, status int) {
+    switch status {
+    case http.StatusBadRequest:
+        writer.WriteHeader(http.StatusBadRequest)
+        writer.Write([]byte("400 - Bad Request!"))
+    case http.StatusForbidden:
+        writer.WriteHeader(http.StatusForbidden)
+        writer.Write([]byte("403 - Forbidden!"))
+    case http.StatusNotFound:
+        writer.WriteHeader(http.StatusNotFound)
+        writer.Write([]byte("404 - Not Found!"))
+    case http.StatusInternalServerError:
+        writer.WriteHeader(http.StatusInternalServerError)
+        writer.Write([]byte("500 - Internal Server Error!"))
+    default:
+        writer.WriteHeader(http.StatusBadRequest)
+        writer.Write([]byte("400 - Bad Request!"))
+    }
+}

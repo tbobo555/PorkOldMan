@@ -12,6 +12,5 @@ type Connection interface {
     GetIsPageVisible() bool
     ListenRead()
     ListenWrite()
-    WriteError(status, err string)
     Close()
 }
