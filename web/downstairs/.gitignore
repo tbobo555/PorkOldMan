@@ -1,0 +1,5 @@
+# Ignore files built by AppCode
+.idea/
+
+# Ignore node module packages
+node_modules

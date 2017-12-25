@@ -20,6 +20,3 @@ DerivedData/
 
 #Ignore go secret file
 config.go
-
-#Ignore front end development
-web/

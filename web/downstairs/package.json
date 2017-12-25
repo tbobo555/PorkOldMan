@@ -1,0 +1,22 @@
+{
+  "name": "downstairs",
+  "version": "1.0.0",
+  "description": "It's a lib for downstairs game of porkoldman.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbobo555/Downstairs-web.git"
+  },
+  "author": "porkoldman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tbobo555/Downstairs-web/issues"
+  },
+  "homepage": "https://github.com/tbobo555/Downstairs-web#readme",
+  "devDependencies": {
+    "webpack": "^3.10.0"
+  }
+}
