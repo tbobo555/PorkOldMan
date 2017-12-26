@@ -12,4 +12,29 @@ export default {
     PlayerIniX: 350,
     PlayerIniY: 400,
     PlayerGravityY: 800,
+    DefaultFontStyle: {
+        font: "60px Play",
+        fill: "#000000",
+        align: "center"
+    },
+    Play_Bold_34_FontStyle: {
+        font: "34px Play",
+        fontWeight: 800,
+        fill: "#000000",
+        align: "center"
+    },
+    GameTitlePos: {X:430, Y:170},
+    Play1PBtnPos: {X:430, Y:330},
+    Play2PBtnPos: {X:430, Y:430},
+    PlayOnlineBtnPos: {X:430, Y:530},
+    SettingBtnPos: {X:150, Y:720},
+    MainGameBoxPos:{X:430, Y:430},
+    MainGameBoxDrawPos:{X:60, Y:100},
+    MainGameBoxSize:{Width:740, Height:660, Radius:5},
+    SettingBoxPos:{X:430, Y:430},
+    SettingBoxDrawPos:{X:155, Y:180},
+    SettingBoxSize:{Width:550, Height:500, Radius:5},
+    MaskBoxPos:{X:430, Y:400},
+    MaskBoxDrawPos:{X:0, Y:0},
+    MaskBoxSize:{Width:860, Height:800, Alpha: 0.9},
 };

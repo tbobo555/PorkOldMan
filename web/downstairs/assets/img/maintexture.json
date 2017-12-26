@@ -1,0 +1,36 @@
+{"frames": {
+
+"checkbox-01.jpg":
+{
+	"frame": {"x":163,"y":1,"w":52,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":38},
+	"sourceSize": {"w":52,"h":38}
+},
+"checkbox-02.jpg":
+{
+	"frame": {"x":217,"y":1,"w":38,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
+	"sourceSize": {"w":38,"h":38}
+},
+"sounds.jpg":
+{
+	"frame": {"x":1,"y":1,"w":160,"h":52},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":160,"h":52},
+	"sourceSize": {"w":160,"h":52}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "maintexture.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":54},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:66e636e4c545e30d2fecfae39787b854:b6ab9ea9948a70190aa0e06d9f8e489b:2544941f470be77f9f762b212f1fd649$"
+}
+}
