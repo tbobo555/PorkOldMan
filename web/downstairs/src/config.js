@@ -1,0 +1,15 @@
+export default {
+    WorldWidth: 860,
+    WorldHeight: 800,
+    CameraWidth: 860,
+    CameraHeight: 760,
+    GameDivName: "container",
+    AutoWidthPercent: 0.75,
+    AutoHeightPercent: 0.9,
+    AtlasNamePorkOldMan: "atlas_porkoldman",
+    AtlasNameMainTexture: "atlas_main_texture",
+    AtlasNameLedges: "atlas_ledges",
+    PlayerIniX: 350,
+    PlayerIniY: 400,
+    PlayerGravityY: 800,
+};

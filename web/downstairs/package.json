@@ -4,7 +4,8 @@
   "description": "It's a lib for downstairs game of porkoldman.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack",
+    "test": "eslint ./src/**/**.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,28 @@
   },
   "homepage": "https://github.com/tbobo555/Downstairs-web#readme",
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.1.0",
+    "babel-loader": "^7.1.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "browser-sync": "^2.21.0",
+    "browser-sync-webpack-plugin": "^1.2.0",
+    "clean-webpack-plugin": "^0.1.17",
+    "copy-webpack-plugin": "^4.3.1",
+    "eslint": "^4.14.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-react": "^7.5.1",
+    "eslint-plugin-standard": "^3.0.1",
+    "expose-loader": "^0.7.4",
+    "html-webpack-plugin": "^2.30.1",
+    "webfontloader": "^1.6.28",
     "webpack": "^3.10.0"
+  },
+  "dependencies": {
+    "phaser-ce": "^2.9.4"
   }
 }

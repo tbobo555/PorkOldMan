@@ -1,0 +1,124 @@
+{"frames": {
+
+"porkoldman-green-01.png":
+{
+	"frame": {"x":1,"y":1,"w":48,"h":58},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":58},
+	"sourceSize": {"w":48,"h":58}
+},
+"porkoldman-green-02.png":
+{
+	"frame": {"x":51,"y":1,"w":48,"h":58},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":58},
+	"sourceSize": {"w":48,"h":58}
+},
+"porkoldman-green-03.png":
+{
+	"frame": {"x":51,"y":61,"w":48,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":56},
+	"sourceSize": {"w":48,"h":56}
+},
+"porkoldman-green-04.png":
+{
+	"frame": {"x":101,"y":61,"w":48,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":56},
+	"sourceSize": {"w":48,"h":56}
+},
+"porkoldman-green-05.png":
+{
+	"frame": {"x":101,"y":1,"w":48,"h":58},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":58},
+	"sourceSize": {"w":48,"h":58}
+},
+"porkoldman-green-06.png":
+{
+	"frame": {"x":151,"y":61,"w":48,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":56},
+	"sourceSize": {"w":48,"h":56}
+},
+"porkoldman-green-07.png":
+{
+	"frame": {"x":201,"y":61,"w":48,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":56},
+	"sourceSize": {"w":48,"h":56}
+},
+"porkoldman-yellow-01.png":
+{
+	"frame": {"x":151,"y":1,"w":48,"h":58},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":58},
+	"sourceSize": {"w":48,"h":58}
+},
+"porkoldman-yellow-02.png":
+{
+	"frame": {"x":201,"y":1,"w":48,"h":58},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":58},
+	"sourceSize": {"w":48,"h":58}
+},
+"porkoldman-yellow-03.png":
+{
+	"frame": {"x":51,"y":119,"w":48,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":56},
+	"sourceSize": {"w":48,"h":56}
+},
+"porkoldman-yellow-04.png":
+{
+	"frame": {"x":101,"y":119,"w":48,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":56},
+	"sourceSize": {"w":48,"h":56}
+},
+"porkoldman-yellow-05.png":
+{
+	"frame": {"x":1,"y":61,"w":48,"h":58},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":58},
+	"sourceSize": {"w":48,"h":58}
+},
+"porkoldman-yellow-06.png":
+{
+	"frame": {"x":151,"y":119,"w":48,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":56},
+	"sourceSize": {"w":48,"h":56}
+},
+"porkoldman-yellow-07.png":
+{
+	"frame": {"x":201,"y":119,"w":48,"h":56},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":56},
+	"sourceSize": {"w":48,"h":56}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "atlas_porkoldman.png",
+	"format": "RGBA8888",
+	"size": {"w":250,"h":176},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:9f24203972f62caff957b181cb63a68a:0ef8ef3291b56c274f34dd8b4803ddde:45d7396263d38e0c24b2c28aeb6a7403$"
+}
+}
