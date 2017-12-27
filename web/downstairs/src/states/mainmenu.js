@@ -16,7 +16,9 @@ class MainMenuState extends Phaser.State {
 
         // setting menu objects
         this.maskBox = null;
+        this.maskBoxPainter = null;
         this.settingBox= null;
+        this.settingBoxPainter = null;
         this.settingGroup = null;
         this.soundCheckBox = null;
         this.sandLedgeCheckBox = null;
@@ -71,7 +73,7 @@ class MainMenuState extends Phaser.State {
         settingBtn.anchor.setTo(0.5);
         settingBtn.inputEnabled = true;
         settingBtn.input.useHandCursor = true;
-        settingBtn.events.onInputUp.add(this.showSettingMenu.bind(this));
+        settingBtn.events.onInputUp.add(this.showSettingMenuEvents.bind(this));
         settingBtn.events.onInputOver.add(Events.scaleBig);
         settingBtn.events.onInputOut.add(Events.scaleOrigin);
         settingBtn.input.priorityID = this.mainMenuIputPriority;
@@ -87,32 +89,29 @@ class MainMenuState extends Phaser.State {
         this.hideSettingMenu();
     }
 
-    play1p() {
-        this.game.state.start("Play1P");
-    }
-
     addSettingMenu() {
-        let maskPainter = this.game.add.graphics(0, 0);
+        let maskPainter = this.game.add.graphics(config.MaskBoxDrawPos.X, config.MaskBoxDrawPos.Y);
         maskPainter.beginFill(0xffffff, config.MaskBoxSize.Alpha);
         maskPainter.lineStyle(0, 0xffffff, config.MaskBoxSize.Alpha);
-        maskPainter.drawRect(config.MaskBoxDrawPos.X, config.MaskBoxDrawPos.Y, config.MaskBoxSize.Width,
-            config.MaskBoxSize.Height);
+        maskPainter.drawRect(0, 0, config.MaskBoxSize.Width, config.MaskBoxSize.Height);
         let maskBox = this.game.add.image(0, 0);
         maskBox.addChild(maskPainter);
         maskBox.inputEnabled = true;
-        maskBox.events.onInputUp.add(this.hideSettingMenu.bind(this));
+        maskBox.events.onInputUp.add(this.hideSettingMenuEvents.bind(this));
         maskBox.input.priorityID = this.settingMaskIputPriority;
+        this.maskBoxPainter = maskPainter;
         this.maskBox = maskBox;
 
-        let settingBoxPainter = this.game.add.graphics(0, 0);
+        let settingBoxPainter = this.game.add.graphics(config.SettingBoxDrawPos.X, config.SettingBoxDrawPos.Y);
         settingBoxPainter.beginFill(0xffffff, 1);
         settingBoxPainter.lineStyle(2, 0x000000, 1);
-        settingBoxPainter.drawRoundedRect(config.SettingBoxDrawPos.X, config.SettingBoxDrawPos.Y, config.SettingBoxSize.Width,
-            config.SettingBoxSize.Height, config.SettingBoxSize.Radius);
+        settingBoxPainter.drawRoundedRect(0, 0, config.SettingBoxSize.Width, config.SettingBoxSize.Height,
+            config.SettingBoxSize.Radius);
         let settingBox = this.game.add.image(0, 0);
         settingBox.addChild(settingBoxPainter);
         settingBox.inputEnabled = true;
         settingBox.input.priorityID = this.settingBoxIputPriority;
+        this.settingBoxPainter = settingBoxPainter;
         this.settingBox = settingBox;
 
         let settingGroup = this.game.add.group();
@@ -247,7 +246,30 @@ class MainMenuState extends Phaser.State {
         }
     }
 
+    // events callback
+    play1p() {
+        this.game.state.start("Play1P");
+    }
+
+    showSettingMenuEvents() {
+        if (utils.checkMouseInObject(this.game.input.mousePointer, this.settingBtn) === false) {
+            return;
+        }
+        this.showSettingMenu();
+    }
+
+    hideSettingMenuEvents() {
+        if (utils.checkMouseInObject(this.game.input.mousePointer, this.maskBoxPainter) === false ||
+            utils.checkMouseInObject(this.game.input.mousePointer, this.settingBoxPainter) === true) {
+            return;
+        }
+        this.hideSettingMenu();
+    }
+
     toggleSounds() {
+        if (utils.checkMouseInObject(this.game.input.mousePointer, this.soundCheckBox) === false) {
+            return;
+        }
         this.soundCheckBox.toggle();
         let setting = this.loadCookieSetting();
         setting.Sounds = this.soundCheckBox.isToggle;
@@ -255,6 +277,9 @@ class MainMenuState extends Phaser.State {
     }
 
     toggleSandLedge() {
+        if (utils.checkMouseInObject(this.game.input.mousePointer, this.sandLedgeCheckBox) === false) {
+            return;
+        }
         this.sandLedgeCheckBox.toggle();
         let setting = this.loadCookieSetting();
         setting.SandLedge = this.sandLedgeCheckBox.isToggle;
@@ -262,6 +287,9 @@ class MainMenuState extends Phaser.State {
     }
 
     toggleJumpLedge() {
+        if (utils.checkMouseInObject(this.game.input.mousePointer, this.jumpLedgeCheckBox) === false) {
+            return;
+        }
         this.jumpLedgeCheckBox.toggle();
         let setting = this.loadCookieSetting();
         setting.JumpLedge = this.jumpLedgeCheckBox.isToggle;
@@ -269,6 +297,9 @@ class MainMenuState extends Phaser.State {
     }
 
     toggleRollLedge() {
+        if (utils.checkMouseInObject(this.game.input.mousePointer, this.rollLedgeCheckBox) === false) {
+            return;
+        }
         this.rollLedgeCheckBox.toggle();
         let setting = this.loadCookieSetting();
         setting.RollLedge = this.rollLedgeCheckBox.isToggle;
