@@ -79,8 +79,8 @@ class MainMenuState extends Phaser.State {
 
         let mainBox = game.add.graphics(0, 0);
         mainBox.lineStyle(2, 0x000000, 1);
-        mainBox.drawRoundedRect(config.MainGameBoxDrawPos.X, config.MainGameBoxDrawPos.Y, config.MainGameBoxSize.Width,
-            config.MainGameBoxSize.Height, config.MainGameBoxSize.Radius);
+        mainBox.drawRoundedRect(config.MainCameraBoxDrawPos.X, config.MainCameraBoxDrawPos.Y,
+            config.MainCameraBoxSize.Width, config.MainCameraBoxSize.Height, config.MainCameraBoxSize.Radius);
         this.mainBox = mainBox;
 
         this.addSettingMenu();
