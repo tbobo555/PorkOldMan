@@ -1,4 +1,11 @@
 export default {
+    DefaultGameSetting: {
+        Sounds : true,
+        SandLedge : true,
+        JumpLedge : true,
+        RollLedge : true,
+    },
+    GameSettingCookieName: "d100_stt",
     WorldWidth: 860,
     WorldHeight: 800,
     CameraWidth: 860,
