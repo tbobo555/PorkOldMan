@@ -10,8 +10,6 @@ class Play1PState extends Phaser.State{
         // group顯示順序初始化
         this.ledgesGroup = game.add.group();
         this.ledgesGroup.enableBody = true;
-        this.bounds = game.add.group();
-        this.bounds.enableBody = true;
 
         // 設置ledges
         for (let i = 0; i < 8; i++) {
@@ -24,18 +22,50 @@ class Play1PState extends Phaser.State{
         }
         this.initLedgesPosition();
 
-        this.player = new Player(game, config.PlayerIniX, config.PlayerIniY,
-            config.AtlasNamePorkOldMan, config.DefaultPlayerFrameName);
+        this.player = new Player(
+            game,
+            config.PlayerIniX,
+            config.PlayerIniY,
+            config.AtlasNamePorkOldMan,
+            config.DefaultPlayerFrameName
+        );
         game.add.existing(this.player);
         game.physics.arcade.enable(this.player);
         this.player.body.gravity.y = config.PlayerGravityY;
         this.player.body.collideWorldBounds = true;
+
+        this.boundsGroup = game.add.group();
+        this.boundsGroup.enableBody = true;
+        this.initBounds();
+
+        let mainBox = game.add.graphics(config.MainCameraBoxDrawPos.X, config.MainCameraBoxDrawPos.Y);
+        mainBox.lineStyle(2, 0x000000, 1);
+        mainBox.drawRoundedRect(
+            0,
+            0,
+            config.MainCameraBoxSize.Width,
+            config.MainCameraBoxSize.Height,
+            config.MainCameraBoxSize.Radius
+        );
+        this.mainBox = mainBox;
+
+        let playBox = game.add.graphics(config.MainGameBoxDrawPos.X, config.MainGameBoxDrawPos.Y);
+        playBox.lineStyle(1, 0x000000, 1);
+        playBox.drawRoundedRect(
+            0,
+            0,
+            config.MainGameBoxSize.Width,
+            config.MainGameBoxSize.Height,
+            config.MainGameBoxSize.Radius
+        );
+        this.playBox = playBox;
 
         this.cursors = game.input.keyboard.createCursorKeys();
         this.moveLedges();
     }
 
     update(game) {
+        game.physics.arcade.collide(this.player, this.boundsGroup);
         this.player.runStop();
 
         let isPlayerCollideLedges = false;
@@ -99,6 +129,49 @@ class Play1PState extends Phaser.State{
                 item.randLedgeType();
             }
         });
+    }
+
+    initBounds() {
+        let boundsUp = this.game.add.graphics(config.GameBoundsUpDrawPos.X, config.GameBoundsUpDrawPos.Y);
+        boundsUp.beginFill(0xffffff, 1);
+        boundsUp.drawRect(0, 0, config.GameBoundsUpSize.Width, config.GameBoundsUpSize.Height);
+        this.game.physics.arcade.enable(boundsUp);
+        boundsUp.body.immovable = true;
+        this.boundsUp = boundsUp;
+        this.boundsGroup.add(this.boundsUp);
+
+        let boundsBottom = this.game.add.graphics(
+            config.GameBoundsBottomDrawPos.X,
+            config.GameBoundsBottomDrawPos.Y
+        );
+        boundsBottom.beginFill(0xffffff, 1);
+        boundsBottom.drawRect(0, 0, config.GameBoundsBottomSize.Width, config.GameBoundsBottomSize.Height);
+        this.game.physics.arcade.enable(boundsBottom);
+        boundsBottom.body.immovable = true;
+        this.boundsBottom = boundsBottom;
+        this.boundsGroup.add(this.boundsBottom);
+
+        let boundsLeft = this.game.add.graphics(
+            config.GameBoundsLeftDrawPos.X,
+            config.GameBoundsLeftDrawPos.Y
+        );
+        boundsLeft.beginFill(0xffffff, 1);
+        boundsLeft.drawRect(0, 0, config.GameBoundsLeftSize.Width, config.GameBoundsLeftSize.Height);
+        this.game.physics.arcade.enable(boundsLeft);
+        boundsLeft.body.immovable = true;
+        this.boundsLeft = boundsLeft;
+        this.boundsGroup.add(this.boundsLeft);
+
+        let boundsRight = this.game.add.graphics(
+            config.GameBoundsRightDrawPos.X,
+            config.GameBoundsRightDrawPos.Y
+        );
+        boundsRight.beginFill(0xffffff, 1);
+        boundsRight.drawRect(0, 0, config.GameBoundsRightSize.Width, config.GameBoundsRightSize.Height);
+        this.game.physics.arcade.enable(boundsRight);
+        boundsRight.body.immovable = true;
+        this.boundsRight = boundsRight;
+        this.boundsGroup.add(this.boundsRight);
     }
 
     moveLedges() {

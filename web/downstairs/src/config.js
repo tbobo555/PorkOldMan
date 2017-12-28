@@ -74,6 +74,14 @@ export default {
     DefaultLedgeFrameName: "normal-ledge.png",
     DefaultLedgeBodySize: {Width: 180, Height: 30, OffsetX: 0, OffsetY: 0},
     ThornLedgeBodySize: {Width: 180, Height: 30, OffsetX: 0, OffsetY: 30},
+    GameBoundsUpDrawPos: {X:0, Y:0},
+    GameBoundsUpSize: {Width: 860, Height: 100},
+    GameBoundsBottomDrawPos: {X:0, Y:760},
+    GameBoundsBottomSize: {Width: 860, Height: 40},
+    GameBoundsLeftDrawPos: {X:0, Y:0},
+    GameBoundsLeftSize: {Width: 60, Height: 800},
+    GameBoundsRightDrawPos: {X:800, Y:0},
+    GameBoundsRightSize: {Width: 60, Height: 800},
 
     JumpLedgeAnimationFrames: [
         "jump-ledge-02.png",

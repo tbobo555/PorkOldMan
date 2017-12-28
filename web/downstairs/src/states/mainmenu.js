@@ -79,11 +79,11 @@ class MainMenuState extends Phaser.State {
         settingBtn.input.priorityID = this.mainMenuIputPriority;
         this.settingBtn = settingBtn;
 
-        let mainBox = game.add.graphics(0, 0);
+        let mainBox = game.add.graphics(config.MainCameraBoxDrawPos.X, config.MainCameraBoxDrawPos.Y);
         mainBox.lineStyle(2, 0x000000, 1);
         mainBox.drawRoundedRect(
-            config.MainCameraBoxDrawPos.X,
-            config.MainCameraBoxDrawPos.Y,
+            0,
+            0,
             config.MainCameraBoxSize.Width,
             config.MainCameraBoxSize.Height,
             config.MainCameraBoxSize.Radius
@@ -95,12 +95,6 @@ class MainMenuState extends Phaser.State {
     }
 
     showLedgeAnimation() {
-        this.ledgesGroup = this.game.add.group();
-        for (let i = 0; i < 8; i++) {
-            let ledge = this.platforms.create(0, this.game.camera.height, config.AtlasNameLedges, "normal-ledge.png");
-            ledge.name = "normal";
-            ledge.anchor.y = 1.0;
-        }
     }
 
 
