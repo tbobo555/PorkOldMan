@@ -81,13 +81,28 @@ class MainMenuState extends Phaser.State {
 
         let mainBox = game.add.graphics(0, 0);
         mainBox.lineStyle(2, 0x000000, 1);
-        mainBox.drawRoundedRect(config.MainCameraBoxDrawPos.X, config.MainCameraBoxDrawPos.Y,
-            config.MainCameraBoxSize.Width, config.MainCameraBoxSize.Height, config.MainCameraBoxSize.Radius);
+        mainBox.drawRoundedRect(
+            config.MainCameraBoxDrawPos.X,
+            config.MainCameraBoxDrawPos.Y,
+            config.MainCameraBoxSize.Width,
+            config.MainCameraBoxSize.Height,
+            config.MainCameraBoxSize.Radius
+        );
         this.mainBox = mainBox;
 
         this.addSettingMenu();
         this.hideSettingMenu();
     }
+
+    showLedgeAnimation() {
+        this.ledgesGroup = this.game.add.group();
+        for (let i = 0; i < 8; i++) {
+            let ledge = this.platforms.create(0, this.game.camera.height, config.AtlasNameLedges, "normal-ledge.png");
+            ledge.name = "normal";
+            ledge.anchor.y = 1.0;
+        }
+    }
+
 
     addSettingMenu() {
         let maskPainter = this.game.add.graphics(config.MaskBoxDrawPos.X, config.MaskBoxDrawPos.Y);
@@ -105,8 +120,13 @@ class MainMenuState extends Phaser.State {
         let settingBoxPainter = this.game.add.graphics(config.SettingBoxDrawPos.X, config.SettingBoxDrawPos.Y);
         settingBoxPainter.beginFill(0xffffff, 1);
         settingBoxPainter.lineStyle(2, 0x000000, 1);
-        settingBoxPainter.drawRoundedRect(0, 0, config.SettingBoxSize.Width, config.SettingBoxSize.Height,
-            config.SettingBoxSize.Radius);
+        settingBoxPainter.drawRoundedRect(
+            0,
+            0,
+            config.SettingBoxSize.Width,
+            config.SettingBoxSize.Height,
+            config.SettingBoxSize.Radius
+        );
         let settingBox = this.game.add.image(0, 0);
         settingBox.addChild(settingBoxPainter);
         settingBox.inputEnabled = true;
@@ -135,29 +155,65 @@ class MainMenuState extends Phaser.State {
         rollLedge.anchor.setTo(0.5);
 
         let setting = this.loadCookieSetting();
-        let soundCheckBox = new ToggleButton(this.game, 520, 322, config.AtlasNameMainTexture,
-            this.toggleSounds.bind(this), this, setting.Sounds, "checkbox-01.jpg", "checkbox-02.jpg");
+        let soundCheckBox = new ToggleButton(
+            this.game,
+            520,
+            322,
+            config.AtlasNameMainTexture,
+            this.toggleSounds.bind(this),
+            this,
+            setting.Sounds,
+            "checkbox-01.jpg",
+            "checkbox-02.jpg"
+        );
         this.game.add.existing(soundCheckBox);
         soundCheckBox.input.priorityID = this.settingButtonIputPriority;
         soundCheckBox.input.useHandCursor = true;
         this.soundCheckBox = soundCheckBox;
 
-        let sandLedgeCheckBox = new ToggleButton(this.game, 520, 402, config.AtlasNameMainTexture,
-            this.toggleSandLedge.bind(this), this, setting.SandLedge, "checkbox-01.jpg", "checkbox-02.jpg");
+        let sandLedgeCheckBox = new ToggleButton(
+            this.game,
+            520,
+            402,
+            config.AtlasNameMainTexture,
+            this.toggleSandLedge.bind(this),
+            this,
+            setting.SandLedge,
+            "checkbox-01.jpg",
+            "checkbox-02.jpg"
+        );
         this.game.add.existing(sandLedgeCheckBox);
         sandLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
         sandLedgeCheckBox.input.useHandCursor = true;
         this.sandLedgeCheckBox = sandLedgeCheckBox;
 
-        let jumpLedgeCheckBox = new ToggleButton(this.game, 520, 482, config.AtlasNameMainTexture,
-            this.toggleJumpLedge.bind(this), this, setting.JumpLedge, "checkbox-01.jpg", "checkbox-02.jpg");
+        let jumpLedgeCheckBox = new ToggleButton(
+            this.game,
+            520,
+            482,
+            config.AtlasNameMainTexture,
+            this.toggleJumpLedge.bind(this),
+            this,
+            setting.JumpLedge,
+            "checkbox-01.jpg",
+            "checkbox-02.jpg"
+        );
         this.game.add.existing(jumpLedgeCheckBox);
         jumpLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
         jumpLedgeCheckBox.input.useHandCursor = true;
         this.jumpLedgeCheckBox = jumpLedgeCheckBox;
 
-        let rollLedgeCheckBox = new ToggleButton(this.game, 520, 562, config.AtlasNameMainTexture,
-            this.toggleRollLedge.bind(this), this, setting.RollLedge, "checkbox-01.jpg", "checkbox-02.jpg");
+        let rollLedgeCheckBox = new ToggleButton(
+            this.game,
+            520,
+            562,
+            config.AtlasNameMainTexture,
+            this.toggleRollLedge.bind(this),
+            this,
+            setting.RollLedge,
+            "checkbox-01.jpg",
+            "checkbox-02.jpg"
+        );
         this.game.add.existing(rollLedgeCheckBox);
         rollLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
         rollLedgeCheckBox.input.useHandCursor = true;

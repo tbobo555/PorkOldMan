@@ -13,11 +13,12 @@ export default {
     GameDivName: "container",
     AutoWidthPercent: 0.75,
     AutoHeightPercent: 0.9,
+    DefaultAnimationFrameRate: 20,
     AtlasNamePorkOldMan: "atlas_porkoldman",
     AtlasNameMainTexture: "atlas_main_texture",
     AtlasNameLedges: "atlas_ledges",
-    PlayerIniX: 350,
-    PlayerIniY: 400,
+    PlayerIniX: 406,
+    PlayerIniY: 370,
     PlayerGravityY: 800,
     DefaultFontStyle: {
         font: "60px Play",
@@ -30,6 +31,24 @@ export default {
         fill: "#000000",
         align: "center"
     },
+    DefaultPlayerFrameName: "porkoldman-green-01.png",
+    PlayerJumpSpeed: -400,
+    PlayerLeftSpeed: -220,
+    PlayerRightSpeed: 220,
+    PlayerGoLeftAnimationName: "Go-Left",
+    PlayerGoRightAnimationName: "Go-Right",
+    PlayerGoLeftAnimationFrames:[
+        "porkoldman-green-02.png",
+        "porkoldman-green-03.png",
+        "porkoldman-green-02.png",
+        "porkoldman-green-04.png"
+    ],
+    PlayerGoRightAnimationFrames:[
+        "porkoldman-green-05.png",
+        "porkoldman-green-06.png",
+        "porkoldman-green-05.png",
+        "porkoldman-green-07.png"
+    ],
     GameTitlePos: {X:430, Y:120},
     Play1PBtnPos: {X:430, Y:330},
     Play2PBtnPos: {X:430, Y:430},
@@ -47,4 +66,72 @@ export default {
     MaskBoxPos:{X:430, Y:400},
     MaskBoxDrawPos:{X:0, Y:0},
     MaskBoxSize:{Width:860, Height:800, Alpha: 0.9},
+    LedgeIniPos: {X:0, Y:760},
+    LedgeRandXRange: {Min:60 , Max:620},
+    LedgeBasePosHeight: 105,
+    LedgeMarginHeight: 90,
+    LedgeMiddleBasePos:{X:340, Y:465},
+    DefaultLedgeFrameName: "normal-ledge.png",
+    DefaultLedgeBodySize: {Width: 180, Height: 30, OffsetX: 0, OffsetY: 0},
+    ThornLedgeBodySize: {Width: 180, Height: 30, OffsetX: 0, OffsetY: 30},
+
+    JumpLedgeAnimationFrames: [
+        "jump-ledge-02.png",
+        "jump-ledge-02.png",
+        "jump-ledge-03.png",
+        "jump-ledge-03.png",
+        "jump-ledge-01.png"
+    ],
+    RollLeftLedgeAnimationFrames: [
+        "left-ledge-01.png",
+        "left-ledge-02.png",
+        "left-ledge-03.png",
+        "left-ledge-04.png",
+        "left-ledge-05.png",
+        "left-ledge-06.png"
+    ],
+    RollRightLedgeAnimationFrames: [
+        "right-ledge-01.png",
+        "right-ledge-02.png",
+        "right-ledge-03.png",
+        "right-ledge-04.png",
+        "right-ledge-05.png",
+        "right-ledge-06.png"
+    ],
+    SandLedgeAnimationFrames: [
+        "sand-ledge-01.png",
+        "sand-ledge-01.png",
+        "sand-ledge-02.png",
+        "sand-ledge-03.png",
+        "sand-ledge-04.png",
+        "sand-ledge-05.png",
+        "sand-ledge-06.png",
+        "sand-ledge-01.png"
+    ],
+    DefaultLedgeFrameSet: [
+        "normal-ledge.png",
+        "sand-ledge-01.png",
+        "thorn-ledge.png",
+        "jump-ledge-01.png",
+        "left-ledge-01.png",
+        "right-ledge-01.png"
+    ],
+    NormalLedgeName: "normal",
+    SandLedgeName: "sand",
+    ThornLedgeName: "thorn",
+    JumpLedgeName: "jump",
+    RollLeftLedgeName: "left",
+    RollRightLedgeName: "right",
+    JumpLedgeAnimationName: "jump",
+    SandLedgeAnimationName: "sand",
+    RollLeftLedgeAnimationName: "left",
+    RollRightLedgeAnimationName: "right",
+    DefaultLedgeNameSet: [
+        "normal",
+        "sand",
+        "thorn",
+        "jump",
+        "left",
+        "right"
+    ],
 };

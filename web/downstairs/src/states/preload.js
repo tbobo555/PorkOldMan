@@ -14,9 +14,21 @@ class PreloadState extends Phaser.State {
         game.load.setPreloadSprite(this.progress);
         game.load.onFileComplete.add(this.fileComplete.bind(this), this);
 
-        game.load.atlasJSONHash(config.AtlasNamePorkOldMan, "assets/img/atlas_porkoldman.png", "assets/img/atlas_porkoldman.json");
-        game.load.atlasJSONHash(config.AtlasNameMainTexture, "assets/img/maintexture.png", "assets/img/maintexture.json");
-        game.load.atlasJSONHash(config.AtlasNameLedges, "assets/img/atlas_ledges.png", "assets/img/atlas_ledges.json");
+        game.load.atlasJSONHash(
+            config.AtlasNamePorkOldMan,
+            "assets/img/atlas_porkoldman.png",
+            "assets/img/atlas_porkoldman.json"
+        );
+        game.load.atlasJSONHash(
+            config.AtlasNameMainTexture,
+            "assets/img/maintexture.png",
+            "assets/img/maintexture.json"
+        );
+        game.load.atlasJSONHash(
+            config.AtlasNameLedges,
+            "assets/img/atlas_ledges.png",
+            "assets/img/atlas_ledges.json"
+        );
     }
     create(game){
         game.state.start("MainMenu");
