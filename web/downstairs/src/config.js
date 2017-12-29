@@ -114,6 +114,14 @@ export const DefaultGameSetting = {
     JumpLedge : true,
     RollLedge : true,
 };
+export const LedgeTypes = {
+    Normal: "normal",
+    Sand: "sand",
+    Thorn: "thorn",
+    Jump: "jump",
+    Left: "left",
+    Right: "right",
+};
 
 
 //----- for atlas path -----
@@ -148,6 +156,7 @@ export const LedgesAtlasKey = {
     SandLedge5: "sand-ledge-05.png",
     SandLedge6: "sand-ledge-06.png",
 };
+export const JumpLedgeAnimationName = "Jump";
 export const JumpLedgeAnimationFrames = [
     LedgesAtlasKey.JumpLedge2,
     LedgesAtlasKey.JumpLedge2,
@@ -155,6 +164,7 @@ export const JumpLedgeAnimationFrames = [
     LedgesAtlasKey.JumpLedge3,
     LedgesAtlasKey.JumpLedge1
 ];
+export const RollLeftLedgeAnimationName = "Left";
 export const RollLeftLedgeAnimationFrames = [
     LedgesAtlasKey.LeftLedge1,
     LedgesAtlasKey.LeftLedge2,
@@ -163,6 +173,7 @@ export const RollLeftLedgeAnimationFrames = [
     LedgesAtlasKey.LeftLedge5,
     LedgesAtlasKey.LeftLedge6,
 ];
+export const RollRightLedgeAnimationName = "Right";
 export const RollRightLedgeAnimationFrames = [
     LedgesAtlasKey.RightLedge1,
     LedgesAtlasKey.RightLedge2,
@@ -171,6 +182,7 @@ export const RollRightLedgeAnimationFrames = [
     LedgesAtlasKey.RightLedge5,
     LedgesAtlasKey.RightLedge6,
 ];
+export const SandLedgeAnimationName = "Land";
 export const SandLedgeAnimationFrames = [
     LedgesAtlasKey.SandLedge1,
     LedgesAtlasKey.SandLedge1,
@@ -186,17 +198,17 @@ export const DefaultLedgeFrameSet = [
     LedgesAtlasKey.NormalLedge,
     LedgesAtlasKey.SandLedge1,
     LedgesAtlasKey.ThornLedge,
-    LedgesAtlasKey.JumpLedge2,
+    LedgesAtlasKey.JumpLedge1,
     LedgesAtlasKey.LeftLedge1,
     LedgesAtlasKey.RightLedge1
 ];
 export const DefaultLedgeNameSet = [
-    "normal",
-    "sand",
-    "thorn",
-    "jump",
-    "left",
-    "right"
+    LedgeTypes.Normal,
+    LedgeTypes.Sand,
+    LedgeTypes.Thorn,
+    LedgeTypes.Jump,
+    LedgeTypes.Left,
+    LedgeTypes.Right
 ];
 
 // pork old man atlas
@@ -220,6 +232,10 @@ export const PorkOldManAtlasKey = {
     Yellow5: "porkoldman-yellow-05.png",
     Yellow6: "porkoldman-yellow-06.png",
     Yellow7: "porkoldman-yellow-07.png",
+};
+export const PlayerAnimationName = {
+    Left: "Left",
+    Right: "Right"
 };
 export const PorkOldManAnimationFrames = {
     Green: {
@@ -355,9 +371,30 @@ export const SettingRollLedgeCheckBoxPos = {
     Y: 562 * PixelScaleRate,
 };
 
-
-
 // for play state
+export const PlayDrawBoxPos = GameDrawBoxPos;
+export const PlayDrawBoxSize = GameDrawBoxSize;
+export const MainGameDrawBoxPos = {
+    X: 60 * PixelScaleRate,
+    Y: 100 * PixelScaleRate,
+    Anchor: LeftTopAnchor
+};
+export const MainGameDrawBoxSize = {
+    Width: 740 * PixelScaleRate,
+    Height: 660 * PixelScaleRate,
+    Radius: 5
+};
+export const MainGameDrawBoxStyle = {
+    LineStyle:{
+        LineWidth: 1,
+        LineColor: 0x000000,
+        LineAlpha: 1,
+    },
+    FillStyle:{
+        FillColor: 0xffffff,
+        FillAlpha: 0
+    },
+};
 export const PlayerIniPos = {
     X: 406 * PixelScaleRate,
     Y: 370 * PixelScaleRate
@@ -366,39 +403,75 @@ export const PlayerGravity = {
     X: 0,
     Y: 800
 };
-export const DefaultPlayerFrameName = "porkoldman-green-01.png";
+export const PlayerIgnoreCollide = {
+    X: 15 * PixelScaleRate,
+    Y: 30 * PixelScaleRate
+};
 export const PlayerJumpSpeed = -400;
 export const PlayerLeftSpeed = -220;
 export const PlayerRightSpeed = 220;
-export const PlayerGoLeftAnimationName = "Go-Left";
-export const PlayerGoRightAnimationName = "Go-Right";
-export const MainGameBoxPos = {X:430, Y:430};
-export const MainGameBoxDrawPos = {X:60, Y:100};
-export const MainGameBoxSize = {Width:740, Height:660, Radius:5};
-export const LedgeIniPos = {X:0, Y:760};
-export const LedgeRandXRange = {Min:60 , Max:620};
-export const LedgeBasePosHeight = 105;
-export const LedgeMarginHeight = 90;
-export const LedgeMiddleBasePos ={X:340, Y:465};
-export const DefaultLedgeFrameName = "normal-ledge.png";
-export const DefaultLedgeBodySize = {Width: 180, Height: 30, OffsetX: 0, OffsetY: 0};
-export const ThornLedgeBodySize = {Width: 180, Height: 30, OffsetX: 0, OffsetY: 30};
-export const GameBoundsUpDrawPos = {X:0, Y:0};
-export const GameBoundsUpSize = {Width: 860, Height: 100};
-export const GameBoundsBottomDrawPos = {X:0, Y:760};
-export const GameBoundsBottomSize = {Width: 860, Height: 40};
-export const GameBoundsLeftDrawPos = {X:0, Y:0};
-export const GameBoundsLeftSize = {Width: 60, Height: 800};
-export const GameBoundsRightDrawPos = {X:800, Y:0};
-export const GameBoundsRightSize = {Width: 60, Height: 800};
-
-export const NormalLedgeName = "normal";
-export const SandLedgeName = "sand";
-export const ThornLedgeName = "thorn";
-export const JumpLedgeName = "jump";
-export const RollLeftLedgeName = "left";
-export const RollRightLedgeName = "right";
-export const JumpLedgeAnimationName = "jump";
-export const SandLedgeAnimationName = "sand";
-export const RollLeftLedgeAnimationName = "left";
-export const RollRightLedgeAnimationName = "right";
+export const MaxLedgesNumber = 8;
+export const MiddleLedgesNumber = MaxLedgesNumber / 2;
+export const LedgeBasicSpeed = 100;
+export const LedgePos = {
+    MinX: 60 * PixelScaleRate,
+    MaxX: 620 * PixelScaleRate,
+    BaseY: 105 * PixelScaleRate,
+    MinY: 40 * PixelScaleRate,
+    MaxY: CameraHeight,
+    MarginY: 90 * PixelScaleRate,
+    Anchor: LeftBottomAnchor
+};
+export const LedgeMiddlePos = {
+    X: 340 * PixelScaleRate,
+    Y: 465 * PixelScaleRate,
+    Anchor: LeftBottomAnchor
+};
+export const DefaultLedgeBodySize = {
+    Width: 180 * PixelScaleRate,
+    Height: 30 * PixelScaleRate,
+    OffsetX: 0,
+    OffsetY: 0
+};
+export const ThornLedgeBodySize = {
+    Width: 180 * PixelScaleRate,
+    Height: 30 * PixelScaleRate,
+    OffsetX: 0,
+    OffsetY: 30 * PixelScaleRate
+};
+export const GameBoundsUpDrawBoxPos = {
+    X: 0,
+    Y: 0,
+    Anchor: LeftTopAnchor
+};
+export const GameBoundsUpDrawBoxSize = {
+    Width: CameraWidth,
+    Height: 100 * PixelScaleRate
+};
+export const GameBoundsBottomDrawBoxPos = {
+    X: 0,
+    Y: 760 * PixelScaleRate,
+    Anchor: LeftTopAnchor
+};
+export const GameBoundsBottomDrawBoxSize = {
+    Width: CameraWidth,
+    Height: 40 * PixelScaleRate
+};
+export const GameBoundsLeftDrawBoxPos = {
+    X: 0,
+    Y: 0,
+    Anchor: LeftTopAnchor
+};
+export const GameBoundsLeftDrawBoxSize = {
+    Width: 60 * PixelScaleRate,
+    Height: WorldHeight
+};
+export const GameBoundsRightDrawBoxPos = {
+    X: 800 * PixelScaleRate,
+    Y: 0,
+    Anchor: LeftTopAnchor
+};
+export const GameBoundsRightDrawBoxSize = {
+    Width: 60 * PixelScaleRate,
+    Height: WorldHeight
+};

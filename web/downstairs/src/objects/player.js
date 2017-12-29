@@ -7,15 +7,15 @@ class Player extends Phaser.Sprite {
         super(game, x, y, key, frame, group);
         this.speedBouns = 0;
         this.animations.add(
-            Config.PlayerGoLeftAnimationName,
-            Config.PlayerGoLeftAnimationFrames,
+            Config.PlayerAnimationName.Left,
+            Config.PorkOldManAnimationFrames.Green.Left,
             Config.DefaultAnimationFrameRate,
             true,
             false
         );
         this.animations.add(
-            Config.PlayerGoRightAnimationName,
-            Config.PlayerGoRightAnimationFrames,
+            Config.PlayerAnimationName.Right,
+            Config.PorkOldManAnimationFrames.Green.Right,
             Config.DefaultAnimationFrameRate,
             true,
             false
@@ -24,13 +24,13 @@ class Player extends Phaser.Sprite {
 
     runLeft(bonus) {
         bonus = bonus || this.speedBouns;
-        this.animations.play(Config.PlayerGoLeftAnimationName);
+        this.animations.play(Config.PlayerAnimationName.Left);
         this.body.velocity.x = Config.PlayerLeftSpeed + bonus;
     }
 
     runRight(bonus) {
         bonus = bonus || this.speedBouns;
-        this.animations.play(Config.PlayerGoRightAnimationName);
+        this.animations.play(Config.PlayerAnimationName.Right);
         this.body.velocity.x = Config.PlayerRightSpeed + bonus;
     }
 
@@ -40,7 +40,7 @@ class Player extends Phaser.Sprite {
 
     runStand(bonus) {
         this.animations.stop();
-        this.frameName = Config.DefaultPlayerFrameName;
+        this.frameName = Config.PorkOldManAtlasKey.Green1;
         bonus = bonus || this.speedBouns;
         this.body.velocity.x = bonus;
     }

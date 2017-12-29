@@ -4,10 +4,10 @@ import * as Config from "../config";
 
 class Ledge extends Phaser.Sprite {
     constructor(game, x, y, group) {
-        super(game, x, y, Config.AtlasNameLedges, Config.DefaultLedgeFrameName, group);
+        super(game, x, y, Config.LedgesAtlasName, Config.LedgesAtlasKey.NormalLedge, group);
         this.frameSet = Config.DefaultLedgeFrameSet;
         this.nameSet = Config.DefaultLedgeNameSet;
-        this.name = Config.NormalLedgeName;
+        this.name = Config.LedgeTypes.Normal;
     }
 
     randLedgeType() {
@@ -20,7 +20,7 @@ class Ledge extends Phaser.Sprite {
             Config.DefaultLedgeBodySize.OffsetY
         );
         switch (this.name) {
-        case Config.ThornLedgeName:
+        case Config.LedgeTypes.Thorn:
             this.body.setSize(
                 Config.ThornLedgeBodySize.Width,
                 Config.ThornLedgeBodySize.Height,
@@ -28,10 +28,10 @@ class Ledge extends Phaser.Sprite {
                 Config.ThornLedgeBodySize.OffsetY
             );
             break;
-        case Config.RollLeftLedgeName:
+        case Config.LedgeTypes.Left:
             this.animations.play(Config.RollLeftLedgeAnimationName);
             break;
-        case Config.RollRightLedgeName:
+        case Config.LedgeTypes.Right:
             this.animations.play(Config.RollRightLedgeAnimationName);
             break;
         }
@@ -69,7 +69,7 @@ class Ledge extends Phaser.Sprite {
     }
 
     setToNormalType() {
-        this.name = Config.NormalLedgeName;
+        this.name = Config.LedgeTypes.Normal;
         this.frameName = Config.DefaultLedgeFrameSet[0];
         this.animations.stop();
         this.body.setSize(
@@ -93,25 +93,22 @@ class Ledge extends Phaser.Sprite {
             return false;
         }
         // ledge 在 target 左邊
-        if (target.body.left  > this.body.right - ignorePixelX) {
-            return false;
-        }
-        return true;
+        return !(target.body.left  > this.body.right - ignorePixelX);
     }
 
     runCollideTrigger(target) {
         switch (this.name) {
-        case Config.SandLedgeName:
+        case Config.LedgeTypes.Sand:
             this.animations.play(Config.SandLedgeAnimationName);
             break;
-        case Config.JumpLedgeName:
+        case Config.LedgeTypes.Jump:
             this.animations.play(Config.JumpLedgeAnimationName);
             target.runJump();
             break;
-        case Config.RollLeftLedgeName:
+        case Config.LedgeTypes.Left:
             target.speedBouns = -100;
             break;
-        case Config.RollRightLedgeName:
+        case Config.LedgeTypes.Right:
             target.speedBouns = 100;
             break;
         default:

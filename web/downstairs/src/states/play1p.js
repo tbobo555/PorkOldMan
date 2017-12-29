@@ -1,7 +1,7 @@
 import Phaser from "phaser";
-import config from "../config";
-import * as motion from  "../events/motions";
-import * as utils from "../weblogic/utils";
+import * as Config from "../config";
+import * as Motion from  "../events/motions";
+import * as Utils from "../weblogic/utils";
 import Ledge from "../objects/ledge";
 import Player from "../objects/player";
 
@@ -12,72 +12,91 @@ class Play1PState extends Phaser.State{
         this.ledgesGroup.enableBody = true;
 
         // 設置ledges
-        for (let i = 0; i < 8; i++) {
-            let ledge = new Ledge(game, config.LedgeIniPos.X, config.LedgeIniPos.Y);
+        for (let i = 0; i < Config.MaxLedgesNumber; i++) {
+            let ledge = new Ledge(game, 0, 0);
             this.ledgesGroup.add(ledge);
             game.physics.arcade.enable(ledge);
             ledge.body.immovable = true;
             ledge.initAnimation();
-            ledge.anchor.y = 1.0;
+            ledge.anchor.setTo(Config.LedgePos.Anchor.X, Config.LedgePos.Anchor.Y);
         }
         this.initLedgesPosition();
 
+        // 玩家角色建置
         this.player = new Player(
             game,
-            config.PlayerIniX,
-            config.PlayerIniY,
-            config.AtlasNamePorkOldMan,
-            config.DefaultPlayerFrameName
+            Config.PlayerIniPos.X,
+            Config.PlayerIniPos.Y,
+            Config.PorkOldManAtlasName,
+            Config.PorkOldManAtlasKey.Green1
         );
         game.add.existing(this.player);
         game.physics.arcade.enable(this.player);
-        this.player.body.gravity.y = config.PlayerGravityY;
+        this.player.body.gravity.y = Config.PlayerGravity.Y;
         this.player.body.collideWorldBounds = true;
 
+        // 建置自訂的遊戲邊界
         this.boundsGroup = game.add.group();
         this.boundsGroup.enableBody = true;
         this.initBounds();
 
-        let mainBox = game.add.graphics(config.MainCameraBoxDrawPos.X, config.MainCameraBoxDrawPos.Y);
-        mainBox.lineStyle(2, 0x000000, 1);
+        // 繪製主邊框
+        let mainBox = game.add.graphics(Config.PlayDrawBoxPos.X, Config.PlayDrawBoxPos.Y);
+        mainBox.lineStyle(
+            Config.DefaultDrawBoxStyle.LineStyle.LineWidth,
+            Config.DefaultDrawBoxStyle.LineStyle.LineColor,
+            Config.DefaultDrawBoxStyle.LineStyle.LineAlpha
+        );
         mainBox.drawRoundedRect(
             0,
             0,
-            config.MainCameraBoxSize.Width,
-            config.MainCameraBoxSize.Height,
-            config.MainCameraBoxSize.Radius
+            Config.PlayDrawBoxSize.Width,
+            Config.PlayDrawBoxSize.Height,
+            Config.PlayDrawBoxSize.Radius
         );
         this.mainBox = mainBox;
 
-        let playBox = game.add.graphics(config.MainGameBoxDrawPos.X, config.MainGameBoxDrawPos.Y);
-        playBox.lineStyle(1, 0x000000, 1);
-        playBox.drawRoundedRect(
-            0,
-            0,
-            config.MainGameBoxSize.Width,
-            config.MainGameBoxSize.Height,
-            config.MainGameBoxSize.Radius
+        // 繪製遊玩邊筐
+        let mainGameBox = game.add.graphics(Config.MainGameDrawBoxPos.X, Config.MainGameDrawBoxPos.Y);
+        mainGameBox.lineStyle(
+            Config.MainGameDrawBoxStyle.LineStyle.LineWidth,
+            Config.MainGameDrawBoxStyle.LineStyle.LineColor,
+            Config.MainGameDrawBoxStyle.LineStyle.LineAlpha
         );
-        this.playBox = playBox;
+        mainGameBox.drawRoundedRect(
+            0,
+            0,
+            Config.MainGameDrawBoxSize.Width,
+            Config.MainGameDrawBoxSize.Height,
+            Config.MainGameDrawBoxSize.Radius
+        );
+        this.mainGameBox = mainGameBox;
 
+        // 監聽輸入: 上下左右鍵
         this.cursors = game.input.keyboard.createCursorKeys();
+
+        // 開始移動所有ledges
         this.moveLedges();
     }
 
     update(game) {
+        // 偵測玩家角色與自訂游戲邊框的碰撞
         game.physics.arcade.collide(this.player, this.boundsGroup);
+
+        // 停止玩家角色的移動
         this.player.runStop();
 
+        // 偵測玩家角色是否與階梯碰撞
         let isPlayerCollideLedges = false;
         if (this.player.top > 115) {
             let ledgesGroup = this.ledgesGroup.getAll();
             ledgesGroup.forEach((item) => {
-                if (item.name === config.SandLedgeName &&
+                if (item.name === Config.LedgeTypes.Sand &&
                     item.animations.currentAnim.isPlaying === true &&
-                    item.frameName !== "sand-ledge-01.png") {
+                    item.frameName !== Config.LedgesAtlasKey.SandLedge1) {
                     return;
                 }
-                if (!item.isCanCollide(this.player, 15, 30)) {
+                if (!item.isCanCollide(this.player, Config.PlayerIgnoreCollide.X, Config.PlayerIgnoreCollide.Y)) {
                     return;
                 }
                 let isCollide = game.physics.arcade.collide(this.player, item);
@@ -89,6 +108,7 @@ class Play1PState extends Phaser.State{
             });
         }
 
+        // 當玩家按下左或右鍵
         if (this.cursors.left.isDown)
         {
             if (this.player.speedBouns > 0 && isPlayerCollideLedges === false) {
@@ -117,13 +137,14 @@ class Play1PState extends Phaser.State{
     }
 
     initLedgesPosition() {
+        // 初始化所有階梯的位置與類型
         let ledgeSet = this.ledgesGroup.getAll();
         ledgeSet.forEach((item, index) => {
-            item.x = utils.getRandomInt(config.LedgeRandXRange.Min, config.LedgeRandXRange.Max);
-            item.y = config.LedgeBasePosHeight + (config.LedgeMarginHeight * index);
-            if (index === 4) {
-                item.x = config.LedgeMiddleBasePos.X;
-                item.y = config.LedgeMiddleBasePos.Y;
+            item.x = Utils.getRandomInt(Config.LedgePos.MinX, Config.LedgePos.MaxX);
+            item.y = Config.LedgePos.BaseY + (Config.LedgePos.MarginY * index);
+            if (index === Config.MiddleLedgesNumber) {
+                item.x = Config.LedgeMiddlePos.X;
+                item.y = Config.LedgeMiddlePos.Y;
                 item.setToNormalType();
             } else {
                 item.randLedgeType();
@@ -132,42 +153,81 @@ class Play1PState extends Phaser.State{
     }
 
     initBounds() {
-        let boundsUp = this.game.add.graphics(config.GameBoundsUpDrawPos.X, config.GameBoundsUpDrawPos.Y);
-        boundsUp.beginFill(0xffffff, 1);
-        boundsUp.drawRect(0, 0, config.GameBoundsUpSize.Width, config.GameBoundsUpSize.Height);
+        // 建置上方邊界
+        let boundsUp = this.game.add.graphics(
+            Config.GameBoundsUpDrawBoxPos.X,
+            Config.GameBoundsUpDrawBoxPos.Y
+        );
+        boundsUp.beginFill(
+            Config.DefaultDrawBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawBoxStyle.FillStyle.FillAlpha
+        );
+        boundsUp.drawRect(
+            0,
+            0,
+            Config.GameBoundsUpDrawBoxSize.Width,
+            Config.GameBoundsUpDrawBoxSize.Height
+        );
         this.game.physics.arcade.enable(boundsUp);
         boundsUp.body.immovable = true;
         this.boundsUp = boundsUp;
         this.boundsGroup.add(this.boundsUp);
 
+        // 建置下方邊界
         let boundsBottom = this.game.add.graphics(
-            config.GameBoundsBottomDrawPos.X,
-            config.GameBoundsBottomDrawPos.Y
+            Config.GameBoundsBottomDrawBoxPos.X,
+            Config.GameBoundsBottomDrawBoxPos.Y
         );
-        boundsBottom.beginFill(0xffffff, 1);
-        boundsBottom.drawRect(0, 0, config.GameBoundsBottomSize.Width, config.GameBoundsBottomSize.Height);
+        boundsBottom.beginFill(
+            Config.DefaultDrawBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawBoxStyle.FillStyle.FillAlpha
+        );
+        boundsBottom.drawRect(
+            0,
+            0,
+            Config.GameBoundsBottomDrawBoxSize.Width,
+            Config.GameBoundsBottomDrawBoxSize.Height
+        );
         this.game.physics.arcade.enable(boundsBottom);
         boundsBottom.body.immovable = true;
         this.boundsBottom = boundsBottom;
         this.boundsGroup.add(this.boundsBottom);
 
+        // 建置左方邊界
         let boundsLeft = this.game.add.graphics(
-            config.GameBoundsLeftDrawPos.X,
-            config.GameBoundsLeftDrawPos.Y
+            Config.GameBoundsLeftDrawBoxPos.X,
+            Config.GameBoundsLeftDrawBoxPos.Y
         );
-        boundsLeft.beginFill(0xffffff, 1);
-        boundsLeft.drawRect(0, 0, config.GameBoundsLeftSize.Width, config.GameBoundsLeftSize.Height);
+        boundsLeft.beginFill(
+            Config.DefaultDrawBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawBoxStyle.FillStyle.FillAlpha
+        );
+        boundsLeft.drawRect(
+            0,
+            0,
+            Config.GameBoundsLeftDrawBoxSize.Width,
+            Config.GameBoundsLeftDrawBoxSize.Height
+        );
         this.game.physics.arcade.enable(boundsLeft);
         boundsLeft.body.immovable = true;
         this.boundsLeft = boundsLeft;
         this.boundsGroup.add(this.boundsLeft);
 
+        // 建置右方邊界
         let boundsRight = this.game.add.graphics(
-            config.GameBoundsRightDrawPos.X,
-            config.GameBoundsRightDrawPos.Y
+            Config.GameBoundsRightDrawBoxPos.X,
+            Config.GameBoundsRightDrawBoxPos.Y
         );
-        boundsRight.beginFill(0xffffff, 1);
-        boundsRight.drawRect(0, 0, config.GameBoundsRightSize.Width, config.GameBoundsRightSize.Height);
+        boundsRight.beginFill(
+            Config.DefaultDrawBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawBoxStyle.FillStyle.FillAlpha
+        );
+        boundsRight.drawRect(
+            0,
+            0,
+            Config.GameBoundsRightDrawBoxSize.Width,
+            Config.GameBoundsRightDrawBoxSize.Height
+        );
         this.game.physics.arcade.enable(boundsRight);
         boundsRight.body.immovable = true;
         this.boundsRight = boundsRight;
@@ -175,17 +235,38 @@ class Play1PState extends Phaser.State{
     }
 
     moveLedges() {
-        let a = this.ledgesGroup.getAll();
-        a.forEach((item) => {
-            motion.moveToXY(this.game, item, item.x, 40, 100, 0, this.resetLedge.bind(this), this);
+        let ledgesSet = this.ledgesGroup.getAll();
+        ledgesSet.forEach((item) => {
+            Motion.moveToXY(
+                this.game,
+                item,
+                item.x,
+                Config.LedgePos.MinY,
+                Config.LedgeBasicSpeed,
+                0,
+                this.resetLedge.bind(this),
+                this
+            );
         });
     }
 
     resetLedge(ledge) {
-        ledge.x = utils.getRandomInt(config.LedgeRandXRange.Min, config.LedgeRandXRange.Max);
-        ledge.y = config.LedgeIniPos.Y;
+        ledge.x = Utils.getRandomInt(
+            Config.LedgePos.MinX,
+            Config.LedgePos.MaxX
+        );
+        ledge.y = Config.LedgePos.MaxY;
         ledge.randLedgeType();
-        motion.moveToXY(this.game, ledge, ledge.x, 40, 100, 0, this.resetLedge.bind(this), this);
+        Motion.moveToXY(
+            this.game,
+            ledge,
+            ledge.x,
+            Config.LedgePos.MinY,
+            Config.LedgeBasicSpeed,
+            0,
+            this.resetLedge.bind(this),
+            this
+        );
     }
 }
 
