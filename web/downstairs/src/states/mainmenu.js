@@ -1,12 +1,18 @@
 import Phaser from "phaser";
 import * as Events from "../events/events";
 import ToggleButton from "../objects/togglebutton";
-import config from "../config";
-import * as utils from "../weblogic/utils";
+import * as Config from "../config";
+import * as Utils from "../weblogic/utils";
+import DictUS from "../dicts/us";
+
 
 class MainMenuState extends Phaser.State {
     constructor() {
         super();
+        // 依語系載入字典檔
+        this.Dict = DictUS;
+
+        // setting main menu objects
         this.gameTitle = null;
         this.play1PBtn = null;
         this.play2PBtn = null;
@@ -32,14 +38,24 @@ class MainMenuState extends Phaser.State {
         this.settingButtonIputPriority = 3;
     }
     create(game) {
-        let style = config.DefaultFontStyle;
-
-        let gameTitle = game.add.text(config.GameTitlePos.X, config.GameTitlePos.Y, "Pork Old Man - Downstairs", style);
-        gameTitle.anchor.setTo(0.5);
+        // 建立 game title
+        let gameTitle = game.add.text(
+            Config.GameTitlePos.X,
+            Config.GameTitlePos.Y,
+            this.Dict.GameTitleText,
+            Config.DefaultFontStyle
+        );
+        gameTitle.anchor.setTo(Config.GameTitlePos.Anchor.X, Config.GameTitlePos.Anchor.Y);
         this.gameTitle = gameTitle;
 
-        let play1PBtn = game.add.text(config.Play1PBtnPos.X, config.Play1PBtnPos.Y, "Play 1P", style);
-        play1PBtn.anchor.set(0.5);
+        // 建立 Play 1P 按鈕
+        let play1PBtn = game.add.text(
+            Config.Play1PBtnPos.X,
+            Config.Play1PBtnPos.Y,
+            this.Dict.Play1PText,
+            Config.DefaultFontStyle
+        );
+        play1PBtn.anchor.set(Config.Play1PBtnPos.Anchor.X, Config.Play1PBtnPos.Anchor.Y);
         play1PBtn.inputEnabled = true;
         play1PBtn.input.useHandCursor = true;
         play1PBtn.events.onInputUp.add(this.play1p.bind(this));
@@ -48,29 +64,46 @@ class MainMenuState extends Phaser.State {
         play1PBtn.input.priorityID = this.mainMenuIputPriority;
         this.play1PBtn = play1PBtn;
 
-        let play2PBtn = game.add.text(config.Play2PBtnPos.X, config.Play2PBtnPos.Y, "Play 2P", style);
-        play2PBtn.anchor.setTo(0.5);
+        // 建立 Play 2P 按鈕
+        let play2PBtn = game.add.text(
+            Config.Play2PBtnPos.X,
+            Config.Play2PBtnPos.Y,
+            this.Dict.Play2PText,
+            Config.DefaultFontStyle
+        );
+        play2PBtn.anchor.setTo(Config.Play2PBtnPos.Anchor.X, Config.Play2PBtnPos.Anchor.Y);
         play2PBtn.inputEnabled = true;
         play2PBtn.input.useHandCursor = true;
-        play2PBtn.events.onInputUp.add(this.play1p.bind(this));
+        play2PBtn.events.onInputUp.add(this.play2p.bind(this));
         play2PBtn.events.onInputOver.add(Events.scaleBig);
         play2PBtn.events.onInputOut.add(Events.scaleOrigin);
         play2PBtn.input.priorityID = this.mainMenuIputPriority;
         this.play2PBtn = play2PBtn;
 
-        let playOnlineBtn = game.add.text(config.PlayOnlineBtnPos.X, config.PlayOnlineBtnPos.Y, "Play Online", style);
-        playOnlineBtn.anchor.setTo(0.5);
+        // 建立 Play Online 按鈕
+        let playOnlineBtn = game.add.text(
+            Config.PlayOnlineBtnPos.X,
+            Config.PlayOnlineBtnPos.Y,
+            this.Dict.PlayOnlineText,
+            Config.DefaultFontStyle
+        );
+        playOnlineBtn.anchor.setTo(Config.PlayOnlineBtnPos.Anchor.X, Config.PlayOnlineBtnPos.Anchor.Y);
         playOnlineBtn.inputEnabled = true;
         playOnlineBtn.input.useHandCursor = true;
-        playOnlineBtn.events.onInputUp.add(this.play1p.bind(this));
+        playOnlineBtn.events.onInputUp.add(this.playOnline.bind(this));
         playOnlineBtn.events.onInputOver.add(Events.scaleBig);
         playOnlineBtn.events.onInputOut.add(Events.scaleOrigin);
         playOnlineBtn.input.priorityID = this.mainMenuIputPriority;
         this.playOnlineBtn = playOnlineBtn;
 
-        style = config.Play_Bold_34_FontStyle;
-        let settingBtn = game.add.text(config.SettingBtnPos.X, config.SettingBtnPos.Y, "Setting", style);
-        settingBtn.anchor.setTo(0.5);
+        // 建立 setting 按鈕
+        let settingBtn = game.add.text(
+            Config.SettingBtnPos.X,
+            Config.SettingBtnPos.Y,
+            this.Dict.SettingText,
+            Config.PlayBold34FontStyle
+        );
+        settingBtn.anchor.setTo(Config.SettingBtnPos.Anchor.X, Config.SettingBtnPos.Anchor.Y);
         settingBtn.inputEnabled = true;
         settingBtn.input.useHandCursor = true;
         settingBtn.events.onInputUp.add(this.showSettingMenuEvents.bind(this));
@@ -79,14 +112,19 @@ class MainMenuState extends Phaser.State {
         settingBtn.input.priorityID = this.mainMenuIputPriority;
         this.settingBtn = settingBtn;
 
-        let mainBox = game.add.graphics(config.MainCameraBoxDrawPos.X, config.MainCameraBoxDrawPos.Y);
-        mainBox.lineStyle(2, 0x000000, 1);
+        // 建立游戲邊框
+        let mainBox = game.add.graphics(Config.MainMenuDrawBoxPos.X, Config.MainMenuDrawBoxPos.Y);
+        mainBox.lineStyle(
+            Config.DefaultDrawBoxStyle.LineStyle.LineWidth,
+            Config.DefaultDrawBoxStyle.LineStyle.LineColor,
+            Config.DefaultDrawBoxStyle.LineStyle.LineAlpha
+        );
         mainBox.drawRoundedRect(
             0,
             0,
-            config.MainCameraBoxSize.Width,
-            config.MainCameraBoxSize.Height,
-            config.MainCameraBoxSize.Radius
+            Config.MainMenuDrawBoxSize.Width,
+            Config.MainMenuDrawBoxSize.Height,
+            Config.MainMenuDrawBoxSize.Radius
         );
         this.mainBox = mainBox;
 
@@ -97,12 +135,19 @@ class MainMenuState extends Phaser.State {
     showLedgeAnimation() {
     }
 
-
     addSettingMenu() {
-        let maskPainter = this.game.add.graphics(config.MaskBoxDrawPos.X, config.MaskBoxDrawPos.Y);
-        maskPainter.beginFill(0xffffff, config.MaskBoxSize.Alpha);
-        maskPainter.lineStyle(0, 0xffffff, config.MaskBoxSize.Alpha);
-        maskPainter.drawRect(0, 0, config.MaskBoxSize.Width, config.MaskBoxSize.Height);
+        // 建立 setting 選單遮罩
+        let maskPainter = this.game.add.graphics(Config.CameraMaskDrawBoxPos.X, Config.CameraMaskDrawBoxPos.Y);
+        maskPainter.beginFill(
+            Config.DefaultDrawMaskBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawMaskBoxStyle.FillStyle.FillAlpha
+        );
+        maskPainter.drawRect(
+            0,
+            0,
+            Config.CameraMaskDrawBoxSize.Width,
+            Config.CameraMaskDrawBoxSize.Height
+        );
         let maskBox = this.game.add.image(0, 0);
         maskBox.addChild(maskPainter);
         maskBox.inputEnabled = true;
@@ -111,15 +156,23 @@ class MainMenuState extends Phaser.State {
         this.maskBoxPainter = maskPainter;
         this.maskBox = maskBox;
 
-        let settingBoxPainter = this.game.add.graphics(config.SettingBoxDrawPos.X, config.SettingBoxDrawPos.Y);
-        settingBoxPainter.beginFill(0xffffff, 1);
-        settingBoxPainter.lineStyle(2, 0x000000, 1);
+        // 建立 setting 選單邊框
+        let settingBoxPainter = this.game.add.graphics(Config.SettingMenuDrawBoxPos.X, Config.SettingMenuDrawBoxPos.Y);
+        settingBoxPainter.beginFill(
+            Config.DefaultDrawBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawBoxStyle.FillStyle.FillAlpha
+        );
+        settingBoxPainter.lineStyle(
+            Config.DefaultDrawBoxStyle.LineStyle.LineWidth,
+            Config.DefaultDrawBoxStyle.LineStyle.LineColor,
+            Config.DefaultDrawBoxStyle.LineStyle.LineAlpha
+        );
         settingBoxPainter.drawRoundedRect(
             0,
             0,
-            config.SettingBoxSize.Width,
-            config.SettingBoxSize.Height,
-            config.SettingBoxSize.Radius
+            Config.SettingMenuDrawBoxSize.Width,
+            Config.SettingMenuDrawBoxSize.Height,
+            Config.SettingMenuDrawBoxSize.Radius
         );
         let settingBox = this.game.add.image(0, 0);
         settingBox.addChild(settingBoxPainter);
@@ -128,85 +181,135 @@ class MainMenuState extends Phaser.State {
         this.settingBoxPainter = settingBoxPainter;
         this.settingBox = settingBox;
 
-        let settingGroup = this.game.add.group();
-        this.settingGroup = settingGroup;
+        // 建立 setting 選單會使用到的靜態圖
+        this.settingGroup = this.game.add.group();
+        // setting選單的標題
+        let settingMenuTitle = new Phaser.Text(
+            this.game,
+            Config.SettingMenuTitlePos.X,
+            Config.SettingMenuTitlePos.Y,
+            this.Dict.SettingText,
+            Config.DefaultFontStyle
+        );
+        settingMenuTitle.anchor.setTo(
+            Config.SettingMenuTitlePos.Anchor.X,
+            Config.SettingMenuTitlePos.Anchor.Y
+        );
+        this.settingGroup.add(settingMenuTitle);
 
-        let style = config.DefaultFontStyle;
-        let settingText = new Phaser.Text(this.game, 430, 225, "Setting", style);
-        settingText.anchor.setTo(0.5);
-        this.settingGroup.add(settingText);
+        // 音效設定圖案
+        let sounds = this.settingGroup.create(
+            Config.SettingSoundPos.X,
+            Config.SettingSoundPos.Y,
+            Config.MainTextureAtlasName,
+            Config.MainTextureAtlasKey.Sounds
+        );
+        sounds.anchor.setTo(
+            Config.SettingSoundPos.Anchor.X,
+            Config.SettingSoundPos.Anchor.Y,
+        );
 
-        let sounds = settingGroup.create(370, 340, config.AtlasNameMainTexture, "sounds.jpg");
-        sounds.anchor.setTo(0.5);
+        // 沙型階梯配置圖案
+        let sandLedge = this.settingGroup.create(
+            Config.SettingSandLedgePos.X,
+            Config.SettingSandLedgePos.Y,
+            Config.LedgesAtlasName,
+            Config.LedgesAtlasKey.SandLedge1
+        );
+        sandLedge.anchor.setTo(
+            Config.SettingSandLedgePos.Anchor.X,
+            Config.SettingSandLedgePos.Anchor.Y
+        );
 
-        let sandLedge = settingGroup.create(370, 420, config.AtlasNameLedges, "sand-ledge-01.png");
-        sandLedge.anchor.setTo(0.5);
+        // 彈跳階梯配置圖案
+        let jumpLedge = this.settingGroup.create(
+            Config.SettingJumpLedgePos.X,
+            Config.SettingJumpLedgePos.Y,
+            Config.LedgesAtlasName,
+            Config.LedgesAtlasKey.JumpLedge1
+        );
+        jumpLedge.anchor.setTo(
+            Config.SettingJumpLedgePos.Anchor.X,
+            Config.SettingJumpLedgePos.Anchor.Y
+        );
 
-        let jumpLedge = settingGroup.create(370, 500, config.AtlasNameLedges, "jump-ledge-01.png");
-        jumpLedge.anchor.setTo(0.5);
+        // 滾動階梯配置圖案
+        let rollLedge = this.settingGroup.create(
+            Config.SettingRollLedgePos.X,
+            Config.SettingRollLedgePos.Y,
+            Config.LedgesAtlasName,
+            Config.LedgesAtlasKey.LeftLedge1
+        );
+        rollLedge.anchor.setTo(
+            Config.SettingRollLedgePos.Anchor.X,
+            Config.SettingRollLedgePos.Anchor.Y
+        );
 
-        let rollLedge = settingGroup.create(370, 580, config.AtlasNameLedges, "left-ledge-01.png");
-        rollLedge.anchor.setTo(0.5);
+        // 從cookie載入配置設定
+        let setting = Utils.loadDownGameSetting();
 
-        let setting = this.loadCookieSetting();
+        // 音效開關按鈕
         let soundCheckBox = new ToggleButton(
             this.game,
-            520,
-            322,
-            config.AtlasNameMainTexture,
+            Config.SettingSoundCheckBoxPos.X,
+            Config.SettingSoundCheckBoxPos.Y,
+            Config.MainTextureAtlasName,
             this.toggleSounds.bind(this),
             this,
             setting.Sounds,
-            "checkbox-01.jpg",
-            "checkbox-02.jpg"
+            Config.MainTextureAtlasKey.CheckBox1,
+            Config.MainTextureAtlasKey.CheckBox2
         );
         this.game.add.existing(soundCheckBox);
         soundCheckBox.input.priorityID = this.settingButtonIputPriority;
         soundCheckBox.input.useHandCursor = true;
         this.soundCheckBox = soundCheckBox;
 
+        // 沙型階梯開關按鈕
         let sandLedgeCheckBox = new ToggleButton(
             this.game,
-            520,
-            402,
-            config.AtlasNameMainTexture,
+            Config.SettingSandLedgeCheckBoxPos.X,
+            Config.SettingSandLedgeCheckBoxPos.Y,
+            Config.MainTextureAtlasName,
             this.toggleSandLedge.bind(this),
             this,
             setting.SandLedge,
-            "checkbox-01.jpg",
-            "checkbox-02.jpg"
+            Config.MainTextureAtlasKey.CheckBox1,
+            Config.MainTextureAtlasKey.CheckBox2
         );
         this.game.add.existing(sandLedgeCheckBox);
         sandLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
         sandLedgeCheckBox.input.useHandCursor = true;
         this.sandLedgeCheckBox = sandLedgeCheckBox;
 
+        // 彈跳階梯開關按鈕
         let jumpLedgeCheckBox = new ToggleButton(
             this.game,
-            520,
-            482,
-            config.AtlasNameMainTexture,
+            Config.SettingJumpLedgeCheckBoxPos.X,
+            Config.SettingJumpLedgeCheckBoxPos.Y,
+            Config.MainTextureAtlasName,
             this.toggleJumpLedge.bind(this),
             this,
             setting.JumpLedge,
-            "checkbox-01.jpg",
-            "checkbox-02.jpg"
+            Config.MainTextureAtlasKey.CheckBox1,
+            Config.MainTextureAtlasKey.CheckBox2
         );
         this.game.add.existing(jumpLedgeCheckBox);
         jumpLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
         jumpLedgeCheckBox.input.useHandCursor = true;
         this.jumpLedgeCheckBox = jumpLedgeCheckBox;
 
+        // 滾動階梯開關按鈕
         let rollLedgeCheckBox = new ToggleButton(
             this.game,
-            520,
-            562,
-            config.AtlasNameMainTexture,
+            Config.SettingRollLedgeCheckBoxPos.X,
+            Config.SettingRollLedgeCheckBoxPos.Y,
+            Config.MainTextureAtlasName,
             this.toggleRollLedge.bind(this),
             this,
             setting.RollLedge,
-            "checkbox-01.jpg",
-            "checkbox-02.jpg"
+            Config.MainTextureAtlasKey.CheckBox1,
+            Config.MainTextureAtlasKey.CheckBox2
         );
         this.game.add.existing(rollLedgeCheckBox);
         rollLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
@@ -266,96 +369,84 @@ class MainMenuState extends Phaser.State {
         this.rollLedgeCheckBox.inputEnabled = false;
     }
 
-    loadCookieSetting() {
-        if (utils.checkCookie(config.GameSettingCookieName) === false) {
-            utils.setCookie(config.GameSettingCookieName, JSON.stringify(config.DefaultGameSetting), 30);
-            return config.DefaultGameSetting;
-        } else {
-            let validSetting = config.DefaultGameSetting;
-            let data = null;
-            try {
-                data = JSON.parse(utils.getCookie(config.GameSettingCookieName));
-            } catch(err) {
-                utils.setCookie(config.GameSettingCookieName, JSON.stringify(validSetting), 30);
-                return validSetting;
-            }
-            if(data.hasOwnProperty("Sounds") && typeof(data.Sounds) === "boolean") {
-                validSetting.Sounds = data.Sounds;
-            }
-            if(data.hasOwnProperty("SandLedge") && typeof(data.SandLedge) === "boolean") {
-                validSetting.SandLedge = data.SandLedge;
-            }
-            if(data.hasOwnProperty("JumpLedge") && typeof(data.JumpLedge) === "boolean") {
-                validSetting.JumpLedge = data.JumpLedge;
-            }
-            if(data.hasOwnProperty("RollLedge") && typeof(data.RollLedge) === "boolean") {
-                validSetting.RollLedge = data.RollLedge;
-            }
-            utils.setCookie(config.GameSettingCookieName, JSON.stringify(validSetting), 30);
-            return validSetting;
-        }
-    }
-
     // events callback
     play1p() {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.play1PBtn) === false) {
+            return;
+        }
+        this.game.state.start("Play1P");
+    }
+
+    play2p() {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.play2PBtn) === false) {
+            return;
+        }
+        // todo: play 2p state
+        this.game.state.start("Play1P");
+    }
+
+    playOnline() {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.playOnlineBtn) === false) {
+            return;
+        }
+        // todo: play online state
         this.game.state.start("Play1P");
     }
 
     showSettingMenuEvents() {
-        if (utils.checkMouseInObject(this.game.input.mousePointer, this.settingBtn) === false) {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.settingBtn) === false) {
             return;
         }
         this.showSettingMenu();
     }
 
     hideSettingMenuEvents() {
-        if (utils.checkMouseInObject(this.game.input.mousePointer, this.maskBoxPainter) === false ||
-            utils.checkMouseInObject(this.game.input.mousePointer, this.settingBoxPainter) === true) {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.maskBoxPainter) === false ||
+            Utils.checkMouseInObject(this.game.input.mousePointer, this.settingBoxPainter) === true) {
             return;
         }
         this.hideSettingMenu();
     }
 
     toggleSounds() {
-        if (utils.checkMouseInObject(this.game.input.mousePointer, this.soundCheckBox) === false) {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.soundCheckBox) === false) {
             return;
         }
         this.soundCheckBox.toggle();
-        let setting = this.loadCookieSetting();
+        let setting = Utils.loadDownGameSetting();
         setting.Sounds = this.soundCheckBox.isToggle;
-        utils.setCookie(config.GameSettingCookieName, JSON.stringify(setting), 30);
+        Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
 
     toggleSandLedge() {
-        if (utils.checkMouseInObject(this.game.input.mousePointer, this.sandLedgeCheckBox) === false) {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.sandLedgeCheckBox) === false) {
             return;
         }
         this.sandLedgeCheckBox.toggle();
-        let setting = this.loadCookieSetting();
+        let setting = Utils.loadDownGameSetting();
         setting.SandLedge = this.sandLedgeCheckBox.isToggle;
-        utils.setCookie(config.GameSettingCookieName, JSON.stringify(setting), 30);
+        Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
 
     toggleJumpLedge() {
-        if (utils.checkMouseInObject(this.game.input.mousePointer, this.jumpLedgeCheckBox) === false) {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.jumpLedgeCheckBox) === false) {
             return;
         }
         this.jumpLedgeCheckBox.toggle();
-        let setting = this.loadCookieSetting();
+        let setting = Utils.loadDownGameSetting();
         setting.JumpLedge = this.jumpLedgeCheckBox.isToggle;
-        utils.setCookie(config.GameSettingCookieName, JSON.stringify(setting), 30);
+        Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
 
     toggleRollLedge() {
-        if (utils.checkMouseInObject(this.game.input.mousePointer, this.rollLedgeCheckBox) === false) {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.rollLedgeCheckBox) === false) {
             return;
         }
         this.rollLedgeCheckBox.toggle();
-        let setting = this.loadCookieSetting();
+        let setting = Utils.loadDownGameSetting();
         setting.RollLedge = this.rollLedgeCheckBox.isToggle;
-        utils.setCookie(config.GameSettingCookieName, JSON.stringify(setting), 30);
+        Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
-
 }
 
 export default MainMenuState;
