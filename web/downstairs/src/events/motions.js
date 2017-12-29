@@ -13,10 +13,43 @@ export function moveToXY(game, sprite, x, y, speed, maxTime, callback, callbackC
         speed = Utils.distanceToXY(sprite, x, y) / (maxTime / 1000);
     }
 
+    let targetOnTop, targetOnBottom, targetOnLeft, targetOnRight = false;
+    if (sprite.x > x) {
+        targetOnLeft = true;
+    } else {
+        targetOnRight = true;
+    }
+    if (sprite.y > y) {
+        targetOnTop = true;
+    } else {
+        targetOnBottom = true;
+    }
+
     sprite.body.velocity.setToPolar(angle, speed);
 
     let te = game.time.events.loop(game.time.physicsElapsedMS, function () {
-        if ( Math.abs(sprite.x - x) <= 1 && Math.abs(sprite.y - y) <= 1) {
+        let xResult, yResult = false;
+        if (targetOnRight === true) {
+            if (sprite.x >= x) {
+                xResult = true;
+            }
+        }
+        if (targetOnLeft === true) {
+            if (sprite.x <= x) {
+                xResult = true;
+            }
+        }
+        if (targetOnBottom === true) {
+            if (sprite.y >= y) {
+                yResult = true;
+            }
+        }
+        if (targetOnTop === true) {
+            if (sprite.y <= y) {
+                yResult = true;
+            }
+        }
+        if (xResult && yResult) {
             te.loop = false;
             sprite.body.velocity.x = 0;
             sprite.body.acceleration.x = 0;

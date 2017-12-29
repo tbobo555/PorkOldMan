@@ -20,6 +20,47 @@ class Play1PState extends Phaser.State{
             ledge.initAnimation();
             ledge.anchor.setTo(Config.LedgePos.Anchor.X, Config.LedgePos.Anchor.Y);
         }
+
+        // 從cookie載入ledges設定
+        let defaultSetting = Config.DefaultLedgeNameSet;
+        let ledgesSetting = Utils.loadDownstairsGameSetting();
+        if (ledgesSetting.SandLedge !== true) {
+            defaultSetting = Utils.removeArrayElementByValue(defaultSetting, Config.LedgeTypes.Sand);
+        }
+        if (ledgesSetting.JumpLedge !== true) {
+            defaultSetting = Utils.removeArrayElementByValue(defaultSetting, Config.LedgeTypes.Jump);
+        }
+        if (ledgesSetting.RollLedge !== true) {
+            defaultSetting = Utils.removeArrayElementByValue(defaultSetting, Config.LedgeTypes.Right);
+            defaultSetting = Utils.removeArrayElementByValue(defaultSetting, Config.LedgeTypes.Right);
+        }
+
+        // 配置每種階梯的出現率
+        let resultSetting = [];
+        for (let i = 0; i < defaultSetting.length; i++) {
+            switch (defaultSetting[i]) {
+            case Config.LedgeTypes.Normal:
+                Utils.pushElementToArray(resultSetting, Config.LedgeTypes.Normal, 10);
+                break;
+            case Config.LedgeTypes.Sand:
+                Utils.pushElementToArray(resultSetting, Config.LedgeTypes.Sand, 2);
+                break;
+            case Config.LedgeTypes.Thorn:
+                Utils.pushElementToArray(resultSetting, Config.LedgeTypes.Thorn, 3);
+                break;
+            case Config.LedgeTypes.Jump:
+                Utils.pushElementToArray(resultSetting, Config.LedgeTypes.Jump, 2);
+                break;
+            case Config.LedgeTypes.Left:
+                Utils.pushElementToArray(resultSetting, Config.LedgeTypes.Left, 1);
+                break;
+            case Config.LedgeTypes.Right:
+                Utils.pushElementToArray(resultSetting, Config.LedgeTypes.Right, 1);
+                break;
+            }
+        }
+        this.ledgesRateSetting = resultSetting;
+        // 配置階梯初始位置與型態
         this.initLedgesPosition();
 
         // 玩家角色建置
@@ -147,7 +188,7 @@ class Play1PState extends Phaser.State{
                 item.y = Config.LedgeMiddlePos.Y;
                 item.setToNormalType();
             } else {
-                item.randLedgeType();
+                item.randLedgeType(this.ledgesRateSetting);
             }
         });
     }
@@ -256,7 +297,7 @@ class Play1PState extends Phaser.State{
             Config.LedgePos.MaxX
         );
         ledge.y = Config.LedgePos.MaxY;
-        ledge.randLedgeType();
+        ledge.randLedgeType(this.ledgesRateSetting);
         Motion.moveToXY(
             this.game,
             ledge,

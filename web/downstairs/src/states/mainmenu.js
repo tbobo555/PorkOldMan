@@ -246,7 +246,7 @@ class MainMenuState extends Phaser.State {
         );
 
         // 從cookie載入配置設定
-        let setting = Utils.loadDownGameSetting();
+        let setting = Utils.loadDownstairsGameSetting();
 
         // 音效開關按鈕
         let soundCheckBox = new ToggleButton(
@@ -413,7 +413,7 @@ class MainMenuState extends Phaser.State {
             return;
         }
         this.soundCheckBox.toggle();
-        let setting = Utils.loadDownGameSetting();
+        let setting = Utils.loadDownstairsGameSetting();
         setting.Sounds = this.soundCheckBox.isToggle;
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
@@ -423,7 +423,7 @@ class MainMenuState extends Phaser.State {
             return;
         }
         this.sandLedgeCheckBox.toggle();
-        let setting = Utils.loadDownGameSetting();
+        let setting = Utils.loadDownstairsGameSetting();
         setting.SandLedge = this.sandLedgeCheckBox.isToggle;
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
@@ -433,7 +433,7 @@ class MainMenuState extends Phaser.State {
             return;
         }
         this.jumpLedgeCheckBox.toggle();
-        let setting = Utils.loadDownGameSetting();
+        let setting = Utils.loadDownstairsGameSetting();
         setting.JumpLedge = this.jumpLedgeCheckBox.isToggle;
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
@@ -443,7 +443,7 @@ class MainMenuState extends Phaser.State {
             return;
         }
         this.rollLedgeCheckBox.toggle();
-        let setting = Utils.loadDownGameSetting();
+        let setting = Utils.loadDownstairsGameSetting();
         setting.RollLedge = this.rollLedgeCheckBox.isToggle;
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }

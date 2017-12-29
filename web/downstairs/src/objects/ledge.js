@@ -1,17 +1,17 @@
 import Phaser from "phaser";
-import * as Motion from "../events/motions";
 import * as Config from "../config";
+import * as Utils from "../weblogic/utils";
 
 class Ledge extends Phaser.Sprite {
     constructor(game, x, y, group) {
         super(game, x, y, Config.LedgesAtlasName, Config.LedgesAtlasKey.NormalLedge, group);
-        this.frameSet = Config.DefaultLedgeFrameSet;
-        this.nameSet = Config.DefaultLedgeNameSet;
         this.name = Config.LedgeTypes.Normal;
+        this.frameName = Config.LedgesAtlasKey.NormalLedge;
     }
 
-    randLedgeType() {
-        Motion.randSpriteFrameAndName(this, this.frameSet, this.nameSet);
+    randLedgeType(ledgeSetting) {
+        ledgeSetting = ledgeSetting || Config.DefaultLedgeNameSet;
+        let randomIndex = Utils.getRandomInt(0, ledgeSetting.length - 1);
         this.animations.stop();
         this.body.setSize(
             Config.DefaultLedgeBodySize.Width,
@@ -19,8 +19,18 @@ class Ledge extends Phaser.Sprite {
             Config.DefaultLedgeBodySize.OffsetX,
             Config.DefaultLedgeBodySize.OffsetY
         );
-        switch (this.name) {
+        switch (ledgeSetting[randomIndex]) {
+        case Config.LedgeTypes.Normal:
+            this.name = Config.LedgeTypes.Normal;
+            this.frameName = Config.LedgesAtlasKey.NormalLedge;
+            break;
+        case Config.LedgeTypes.Sand:
+            this.name = Config.LedgeTypes.Sand;
+            this.frameName = Config.LedgesAtlasKey.SandLedge1;
+            break;
         case Config.LedgeTypes.Thorn:
+            this.name = Config.LedgeTypes.Thorn;
+            this.frameName = Config.LedgesAtlasKey.ThornLedge;
             this.body.setSize(
                 Config.ThornLedgeBodySize.Width,
                 Config.ThornLedgeBodySize.Height,
@@ -28,10 +38,18 @@ class Ledge extends Phaser.Sprite {
                 Config.ThornLedgeBodySize.OffsetY
             );
             break;
+        case Config.LedgeTypes.Jump:
+            this.name = Config.LedgeTypes.Jump;
+            this.frameName = Config.LedgesAtlasKey.JumpLedge1;
+            break;
         case Config.LedgeTypes.Left:
+            this.name = Config.LedgeTypes.Left;
+            this.frameName = Config.LedgesAtlasKey.LeftLedge1;
             this.animations.play(Config.RollLeftLedgeAnimationName);
             break;
         case Config.LedgeTypes.Right:
+            this.name = Config.LedgeTypes.Right;
+            this.frameName = Config.LedgesAtlasKey.RightLedge1;
             this.animations.play(Config.RollRightLedgeAnimationName);
             break;
         }
@@ -70,7 +88,7 @@ class Ledge extends Phaser.Sprite {
 
     setToNormalType() {
         this.name = Config.LedgeTypes.Normal;
-        this.frameName = Config.DefaultLedgeFrameSet[0];
+        this.frameName = Config.LedgesAtlasKey.NormalLedge;
         this.animations.stop();
         this.body.setSize(
             Config.DefaultLedgeBodySize.Width,

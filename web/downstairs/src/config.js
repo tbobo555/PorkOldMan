@@ -417,8 +417,8 @@ export const LedgePos = {
     MinX: 60 * PixelScaleRate,
     MaxX: 620 * PixelScaleRate,
     BaseY: 105 * PixelScaleRate,
-    MinY: 40 * PixelScaleRate,
-    MaxY: CameraHeight,
+    MinY: 70 * PixelScaleRate,
+    MaxY: CameraHeight + (30 * PixelScaleRate),
     MarginY: 90 * PixelScaleRate,
     Anchor: LeftBottomAnchor
 };
