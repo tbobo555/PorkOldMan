@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import config from "../config";
+import * as Config from "../config";
 
 
 class Player extends Phaser.Sprite {
@@ -7,16 +7,16 @@ class Player extends Phaser.Sprite {
         super(game, x, y, key, frame, group);
         this.speedBouns = 0;
         this.animations.add(
-            config.PlayerGoLeftAnimationName,
-            config.PlayerGoLeftAnimationFrames,
-            config.DefaultAnimationFrameRate,
+            Config.PlayerGoLeftAnimationName,
+            Config.PlayerGoLeftAnimationFrames,
+            Config.DefaultAnimationFrameRate,
             true,
             false
         );
         this.animations.add(
-            config.PlayerGoRightAnimationName,
-            config.PlayerGoRightAnimationFrames,
-            config.DefaultAnimationFrameRate,
+            Config.PlayerGoRightAnimationName,
+            Config.PlayerGoRightAnimationFrames,
+            Config.DefaultAnimationFrameRate,
             true,
             false
         );
@@ -24,23 +24,23 @@ class Player extends Phaser.Sprite {
 
     runLeft(bonus) {
         bonus = bonus || this.speedBouns;
-        this.animations.play(config.PlayerGoLeftAnimationName);
-        this.body.velocity.x = config.PlayerLeftSpeed + bonus;
+        this.animations.play(Config.PlayerGoLeftAnimationName);
+        this.body.velocity.x = Config.PlayerLeftSpeed + bonus;
     }
 
     runRight(bonus) {
         bonus = bonus || this.speedBouns;
-        this.animations.play(config.PlayerGoRightAnimationName);
-        this.body.velocity.x = config.PlayerRightSpeed + bonus;
+        this.animations.play(Config.PlayerGoRightAnimationName);
+        this.body.velocity.x = Config.PlayerRightSpeed + bonus;
     }
 
     runJump() {
-        this.body.velocity.y = config.PlayerJumpSpeed;
+        this.body.velocity.y = Config.PlayerJumpSpeed;
     }
 
     runStand(bonus) {
         this.animations.stop();
-        this.frameName = config.DefaultPlayerFrameName;
+        this.frameName = Config.DefaultPlayerFrameName;
         bonus = bonus || this.speedBouns;
         this.body.velocity.x = bonus;
     }

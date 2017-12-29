@@ -1,4 +1,4 @@
-import * as utils from "../weblogic/utils";
+import * as Utils from "../weblogic/utils";
 
 
 export function moveToXY(game, sprite, x, y, speed, maxTime, callback, callbackContext) {
@@ -10,7 +10,7 @@ export function moveToXY(game, sprite, x, y, speed, maxTime, callback, callbackC
     if (maxTime > 0)
     {
         //  We know how many pixels we need to move, but how fast?
-        speed = utils.distanceToXY(sprite, x, y) / (maxTime / 1000);
+        speed = Utils.distanceToXY(sprite, x, y) / (maxTime / 1000);
     }
 
     sprite.body.velocity.setToPolar(angle, speed);
@@ -31,12 +31,12 @@ export function moveToXY(game, sprite, x, y, speed, maxTime, callback, callbackC
 }
 
 export function randSpriteFrame(sprite, frames) {
-    let index = utils.getRandomInt(0, frames.length - 1);
+    let index = Utils.getRandomInt(0, frames.length - 1);
     sprite.frameName = frames[index];
 }
 
 export function randSpriteFrameAndName(sprite, frames, names) {
-    let index = utils.getRandomInt(0, frames.length - 1);
+    let index = Utils.getRandomInt(0, frames.length - 1);
     sprite.name = names[index];
     sprite.frameName = frames[index];
 }

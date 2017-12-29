@@ -1,9 +1,9 @@
-import config from "../config";
+import * as Config from "../config";
 
 export function autoAdjustGameScreenSize(divName) {
     let divgame = document.getElementById(divName);
-    divgame.style.width = (window.innerWidth * config.AutoWidthPercent) + "px";
-    divgame.style.height = (window.innerHeight * config.AutoHeightPercent) + "px";
+    divgame.style.width = (window.innerWidth * Config.AutoWidthPercent) + "px";
+    divgame.style.height = (window.innerHeight * Config.AutoHeightPercent) + "px";
 }
 
 export function getRandomInt(min, max) {
@@ -54,4 +54,46 @@ export function checkMouseInObject(mouse, object) {
     let maxX = object.right;
     let maxY = object.bottom;
     return !(mouseX < minX || mouseY < minY || mouseX > maxX || mouseY > maxY);
+}
+
+export function loadDownGameSetting() {
+    if (checkCookie(Config.GameSettingCookieName) === false) {
+        setCookie(
+            Config.GameSettingCookieName,
+            JSON.stringify(Config.DefaultGameSetting),
+            Config.GameSettingCookieExpiredDay
+        );
+        return Config.DefaultGameSetting;
+    } else {
+        let validSetting = Config.DefaultGameSetting;
+        let data = null;
+        try {
+            data = JSON.parse(getCookie(Config.GameSettingCookieName));
+        } catch(err) {
+            setCookie(
+                Config.GameSettingCookieName,
+                JSON.stringify(validSetting),
+                Config.GameSettingCookieExpiredDay
+            );
+            return validSetting;
+        }
+        if(data.hasOwnProperty("Sounds") && typeof(data.Sounds) === "boolean") {
+            validSetting.Sounds = data.Sounds;
+        }
+        if(data.hasOwnProperty("SandLedge") && typeof(data.SandLedge) === "boolean") {
+            validSetting.SandLedge = data.SandLedge;
+        }
+        if(data.hasOwnProperty("JumpLedge") && typeof(data.JumpLedge) === "boolean") {
+            validSetting.JumpLedge = data.JumpLedge;
+        }
+        if(data.hasOwnProperty("RollLedge") && typeof(data.RollLedge) === "boolean") {
+            validSetting.RollLedge = data.RollLedge;
+        }
+        setCookie(
+            Config.GameSettingCookieName,
+            JSON.stringify(validSetting),
+            Config.GameSettingCookieExpiredDay
+        );
+        return validSetting;
+    }
 }

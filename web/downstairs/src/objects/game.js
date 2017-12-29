@@ -1,18 +1,18 @@
 import "pixi";
 import "p2";
 import Phaser from "phaser";
-import config from "../config";
+import * as Config from "../config";
 import Boot from "../states/boot";
 import Preload from "../states/preload";
 import MainMenu from "../states/mainmenu";
 import Play1P from "../states/play1p";
-import * as utils from "../weblogic/utils";
+import * as Utils from "../weblogic/utils";
 
 class DownStairsGame extends Phaser.Game {
     constructor() {
-        super(config.CameraWidth, config.CameraHeight, Phaser.AUTO, config.GameDivName);
-        if (utils.checkCookie(config.GameSettingCookieName) === false) {
-            utils.setCookie(config.GameSettingCookieName, JSON.stringify(config.DefaultGameSetting), 30);
+        super(Config.CameraWidth, Config.CameraHeight, Phaser.AUTO, Config.GameDivName);
+        if (Utils.checkCookie(Config.GameSettingCookieName) === false) {
+            Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(Config.DefaultGameSetting), 30);
         }
         this.state.add("Boot", Boot, false);
         this.state.add("Preload", Preload, false);

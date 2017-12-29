@@ -1,82 +1,82 @@
 import Phaser from "phaser";
-import * as motion from "../events/motions";
-import config from "../config";
+import * as Motion from "../events/motions";
+import * as Config from "../config";
 
 class Ledge extends Phaser.Sprite {
     constructor(game, x, y, group) {
-        super(game, x, y, config.AtlasNameLedges, config.DefaultLedgeFrameName, group);
-        this.frameSet = config.DefaultLedgeFrameSet;
-        this.nameSet = config.DefaultLedgeNameSet;
-        this.name = config.NormalLedgeName;
+        super(game, x, y, Config.AtlasNameLedges, Config.DefaultLedgeFrameName, group);
+        this.frameSet = Config.DefaultLedgeFrameSet;
+        this.nameSet = Config.DefaultLedgeNameSet;
+        this.name = Config.NormalLedgeName;
     }
 
     randLedgeType() {
-        motion.randSpriteFrameAndName(this, this.frameSet, this.nameSet);
+        Motion.randSpriteFrameAndName(this, this.frameSet, this.nameSet);
         this.animations.stop();
         this.body.setSize(
-            config.DefaultLedgeBodySize.Width,
-            config.DefaultLedgeBodySize.Height,
-            config.DefaultLedgeBodySize.OffsetX,
-            config.DefaultLedgeBodySize.OffsetY
+            Config.DefaultLedgeBodySize.Width,
+            Config.DefaultLedgeBodySize.Height,
+            Config.DefaultLedgeBodySize.OffsetX,
+            Config.DefaultLedgeBodySize.OffsetY
         );
         switch (this.name) {
-        case config.ThornLedgeName:
+        case Config.ThornLedgeName:
             this.body.setSize(
-                config.ThornLedgeBodySize.Width,
-                config.ThornLedgeBodySize.Height,
-                config.ThornLedgeBodySize.OffsetX,
-                config.ThornLedgeBodySize.OffsetY
+                Config.ThornLedgeBodySize.Width,
+                Config.ThornLedgeBodySize.Height,
+                Config.ThornLedgeBodySize.OffsetX,
+                Config.ThornLedgeBodySize.OffsetY
             );
             break;
-        case config.RollLeftLedgeName:
-            this.animations.play(config.RollLeftLedgeAnimationName);
+        case Config.RollLeftLedgeName:
+            this.animations.play(Config.RollLeftLedgeAnimationName);
             break;
-        case config.RollRightLedgeName:
-            this.animations.play(config.RollRightLedgeAnimationName);
+        case Config.RollRightLedgeName:
+            this.animations.play(Config.RollRightLedgeAnimationName);
             break;
         }
     }
 
     initAnimation() {
         this.animations.add(
-            config.JumpLedgeAnimationName,
-            config.JumpLedgeAnimationFrames,
-            config.DefaultAnimationFrameRate + 10,
+            Config.JumpLedgeAnimationName,
+            Config.JumpLedgeAnimationFrames,
+            Config.DefaultAnimationFrameRate + 10,
             false,
             false
         );
         this.animations.add(
-            config.RollLeftLedgeAnimationName,
-            config.RollLeftLedgeAnimationFrames,
-            config.DefaultAnimationFrameRate,
+            Config.RollLeftLedgeAnimationName,
+            Config.RollLeftLedgeAnimationFrames,
+            Config.DefaultAnimationFrameRate,
             true,
             false
         );
         this.animations.add(
-            config.RollRightLedgeAnimationName,
-            config.RollRightLedgeAnimationFrames,
-            config.DefaultAnimationFrameRate,
+            Config.RollRightLedgeAnimationName,
+            Config.RollRightLedgeAnimationFrames,
+            Config.DefaultAnimationFrameRate,
             true,
             false
         );
         this.animations.add(
-            config.SandLedgeAnimationName,
-            config.SandLedgeAnimationFrames,
-            config.DefaultAnimationFrameRate,
+            Config.SandLedgeAnimationName,
+            Config.SandLedgeAnimationFrames,
+            Config.DefaultAnimationFrameRate,
             false,
             false
         );
     }
 
     setToNormalType() {
-        this.name = config.NormalLedgeName;
-        this.frameName = config.DefaultLedgeFrameSet[0];
+        this.name = Config.NormalLedgeName;
+        this.frameName = Config.DefaultLedgeFrameSet[0];
         this.animations.stop();
         this.body.setSize(
-            config.DefaultLedgeBodySize.Width,
-            config.DefaultLedgeBodySize.Height,
-            config.DefaultLedgeBodySize.OffsetX,
-            config.DefaultLedgeBodySize.OffsetY
+            Config.DefaultLedgeBodySize.Width,
+            Config.DefaultLedgeBodySize.Height,
+            Config.DefaultLedgeBodySize.OffsetX,
+            Config.DefaultLedgeBodySize.OffsetY
         );
     }
 
@@ -101,17 +101,17 @@ class Ledge extends Phaser.Sprite {
 
     runCollideTrigger(target) {
         switch (this.name) {
-        case config.SandLedgeName:
-            this.animations.play(config.SandLedgeAnimationName);
+        case Config.SandLedgeName:
+            this.animations.play(Config.SandLedgeAnimationName);
             break;
-        case config.JumpLedgeName:
-            this.animations.play(config.JumpLedgeAnimationName);
+        case Config.JumpLedgeName:
+            this.animations.play(Config.JumpLedgeAnimationName);
             target.runJump();
             break;
-        case config.RollLeftLedgeName:
+        case Config.RollLeftLedgeName:
             target.speedBouns = -100;
             break;
-        case config.RollRightLedgeName:
+        case Config.RollRightLedgeName:
             target.speedBouns = 100;
             break;
         default:
