@@ -3,39 +3,51 @@ import config from "../config";
 
 
 class PreloadState extends Phaser.State {
-    preload(game) {
-        let style = config.DefaultFontStyle;
-        this.loading = game.add.text(this.game.world.centerX, this.game.world.centerY, "loading...", style);
-        this.loading.anchor.setTo(0.5);
-        this.progress = game.add.text(this.game.world.centerX, this.game.world.centerY + 100, "0%", style);
-        this.progress.anchor.setTo(0.5);
+    constructor() {
+        super();
+        // loading文字
+        this.loadingText = null;
+        // loading進度條
+        this.loadingProgress = null;
+    }
 
-        game.load.setPreloadSprite(this.loading);
-        game.load.setPreloadSprite(this.progress);
+    preload(game) {
+        // loading文字使用預設的字型格式
+        let style = config.DefaultFontStyle;
+        // 建立loading文字
+        this.loadingText = game.add.text(config.LoadingTextPos.X, config.LoadingTextPos.Y, "loading...", style);
+        this.loadingText.anchor.setTo(config.LoadingTextPos.Anchor.X, config.LoadingTextPos.Anchor.Y);
+        game.load.setPreloadSprite(this.loadingText);
+        // 建立loading進度條
+        this.loadingProgress = game.add.text(config.LoadingProgressPos.X, config.LoadingProgressPos.Y, "0%", style);
+        this.loadingProgress.anchor.setTo(config.LoadingProgressPos.Anchor.X, config.LoadingProgressPos.Anchor.Y);
+        game.load.setPreloadSprite(this.loadingProgress);
         game.load.onFileComplete.add(this.fileComplete.bind(this), this);
 
+        // 預先載入資源
         game.load.atlasJSONHash(
-            config.AtlasNamePorkOldMan,
-            "assets/img/atlas_porkoldman.png",
-            "assets/img/atlas_porkoldman.json"
+            config.PorkOldManAtlasName,
+            config.PorkOldManAtlasPath.Image,
+            config.PorkOldManAtlasPath.JSON
         );
         game.load.atlasJSONHash(
-            config.AtlasNameMainTexture,
-            "assets/img/maintexture.png",
-            "assets/img/maintexture.json"
+            config.MainTextureAtlasName,
+            config.MainTextureAtlasPath.Image,
+            config.MainTextureAtlasPath.JSON
         );
         game.load.atlasJSONHash(
-            config.AtlasNameLedges,
-            "assets/img/atlas_ledges.png",
-            "assets/img/atlas_ledges.json"
+            config.LedgesAtlasName,
+            config.LedgesAtlasPath.Image,
+            config.LedgesAtlasPath.JSON
         );
     }
+
     create(game){
         game.state.start("MainMenu");
     }
 
     fileComplete(progress) {
-        this.progress.text = progress + "%";
+        this.loadingProgress.text = progress + "%";
     }
 }
 

@@ -14,9 +14,6 @@ export default {
     AutoWidthPercent: 0.75,
     AutoHeightPercent: 0.9,
     DefaultAnimationFrameRate: 20,
-    AtlasNamePorkOldMan: "atlas_porkoldman",
-    AtlasNameMainTexture: "atlas_main_texture",
-    AtlasNameLedges: "atlas_ledges",
     PlayerIniX: 406,
     PlayerIniY: 370,
     PlayerGravityY: 800,
@@ -142,4 +139,35 @@ export default {
         "left",
         "right"
     ],
+
+    //----- for preload state -----
+    // loading文字的放置位置
+    LoadingTextPos: {X: 430, Y:400, Anchor:{X:0.5, Y:0.5}},
+
+    // loading進度條的放置位置
+    LoadingProgressPos: {X: 430, Y:400, Anchor:{X:0.5, Y:0.5}},
+
+
+    //----- for atlas path -----
+    // ledges atlas
+    LedgesAtlasName: "atlas_ledges",
+    LedgesAtlasPath: {
+        Image: "assets/img/atlas_ledges.png",
+        JSON: "assets/img/atlas_ledges.json"
+    },
+
+    // pork old man atlas
+    PorkOldManAtlasName: "atlas_porkoldman",
+    PorkOldManAtlasPath: {
+        Image: "assets/img/atlas_porkoldman.png",
+        JSON: "assets/img/atlas_porkoldman.json"
+    },
+
+    // main texture atlas
+    MainTextureAtlasName: "atlas_main_texture",
+    MainTextureAtlasPath: {
+        Image: "assets/img/maintexture.png",
+        JSON: "assets/img/maintexture.json"
+    },
+
 };
