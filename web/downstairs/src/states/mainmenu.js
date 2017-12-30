@@ -4,7 +4,9 @@ import ToggleButton from "../objects/togglebutton";
 import * as Config from "../config";
 import * as Utils from "../weblogic/utils";
 import DictUS from "../dicts/us";
-
+import Container from "../objects/container";
+import Mask from "../objects/mask";
+import Box from "../objects/box";
 
 class MainMenuState extends Phaser.State {
     constructor() {
@@ -20,16 +22,8 @@ class MainMenuState extends Phaser.State {
         this.settingBtn = null;
         this.mainBox = null;
 
-        // setting menu objects
-        this.maskBox = null;
-        this.maskBoxPainter = null;
-        this.settingBox= null;
-        this.settingBoxPainter = null;
-        this.settingGroup = null;
-        this.soundCheckBox = null;
-        this.sandLedgeCheckBox = null;
-        this.jumpLedgeCheckBox = null;
-        this.rollLedgeCheckBox = null;
+        // setting menu container
+        this.settingMenu = null;
 
         // input priority
         this.mainMenuIputPriority = 0;
@@ -128,122 +122,107 @@ class MainMenuState extends Phaser.State {
         );
         this.mainBox = mainBox;
 
-        this.addSettingMenu();
+        // 初始化setting menu
+        this.initSettingMenu();
         this.hideSettingMenu();
     }
 
     showLedgeAnimation() {
     }
 
-    addSettingMenu() {
-        // 建立 setting 選單遮罩
-        let maskPainter = this.game.add.graphics(Config.CameraMaskDrawBoxPos.X, Config.CameraMaskDrawBoxPos.Y);
-        maskPainter.beginFill(
-            Config.DefaultDrawMaskBoxStyle.FillStyle.FillColor,
-            Config.DefaultDrawMaskBoxStyle.FillStyle.FillAlpha
-        );
-        maskPainter.drawRect(
-            0,
-            0,
-            Config.CameraMaskDrawBoxSize.Width,
-            Config.CameraMaskDrawBoxSize.Height
-        );
-        let maskBox = this.game.add.image(0, 0);
-        maskBox.addChild(maskPainter);
-        maskBox.inputEnabled = true;
-        maskBox.events.onInputUp.add(this.hideSettingMenuEvents.bind(this));
-        maskBox.input.priorityID = this.settingMaskIputPriority;
-        this.maskBoxPainter = maskPainter;
-        this.maskBox = maskBox;
+    initSettingMenu() {
+        this.settingMenu = new Container(this.game);
 
-        // 建立 setting 選單邊框
-        let settingBoxPainter = this.game.add.graphics(Config.SettingMenuDrawBoxPos.X, Config.SettingMenuDrawBoxPos.Y);
-        settingBoxPainter.beginFill(
-            Config.DefaultDrawBoxStyle.FillStyle.FillColor,
-            Config.DefaultDrawBoxStyle.FillStyle.FillAlpha
+        // 建立遮罩
+        let mask = new Mask(this.game);
+        mask.setInputEvent(
+            this.hideSettingMenuEvents.bind(this),
+            this.settingMaskIputPriority
         );
-        settingBoxPainter.lineStyle(
-            Config.DefaultDrawBoxStyle.LineStyle.LineWidth,
-            Config.DefaultDrawBoxStyle.LineStyle.LineColor,
-            Config.DefaultDrawBoxStyle.LineStyle.LineAlpha
-        );
-        settingBoxPainter.drawRoundedRect(
-            0,
-            0,
+        this.settingMenu.addInput("mask", mask, false);
+
+        // 選單邊框
+        let box = new Box(
+            this.game,
+            Config.SettingMenuDrawBoxPos.X,
+            Config.SettingMenuDrawBoxPos.Y,
             Config.SettingMenuDrawBoxSize.Width,
             Config.SettingMenuDrawBoxSize.Height,
             Config.SettingMenuDrawBoxSize.Radius
         );
-        let settingBox = this.game.add.image(0, 0);
-        settingBox.addChild(settingBoxPainter);
-        settingBox.inputEnabled = true;
-        settingBox.input.priorityID = this.settingBoxIputPriority;
-        this.settingBoxPainter = settingBoxPainter;
-        this.settingBox = settingBox;
+        box.inputEnabled = true;
+        box.input.priorityID = this.settingBoxIputPriority;
+        this.settingMenu.addInput("box", box, false);
 
-        // 建立 setting 選單會使用到的靜態圖
-        this.settingGroup = this.game.add.group();
         // setting選單的標題
-        let settingMenuTitle = new Phaser.Text(
+        let title = new Phaser.Text(
             this.game,
             Config.SettingMenuTitlePos.X,
             Config.SettingMenuTitlePos.Y,
             this.Dict.SettingText,
             Config.DefaultFontStyle
         );
-        settingMenuTitle.anchor.setTo(
+        title.anchor.setTo(
             Config.SettingMenuTitlePos.Anchor.X,
             Config.SettingMenuTitlePos.Anchor.Y
         );
-        this.settingGroup.add(settingMenuTitle);
+        this.settingMenu.addAsset("title", title);
 
         // 音效設定圖案
-        let sounds = this.settingGroup.create(
+        let soundsImage = new Phaser.Image(
+            this.game,
             Config.SettingSoundPos.X,
             Config.SettingSoundPos.Y,
             Config.MainTextureAtlasName,
             Config.MainTextureAtlasKey.Sounds
         );
-        sounds.anchor.setTo(
+        soundsImage.anchor.setTo(
             Config.SettingSoundPos.Anchor.X,
             Config.SettingSoundPos.Anchor.Y,
         );
+        this.settingMenu.addAsset("sounds", soundsImage);
 
         // 沙型階梯配置圖案
-        let sandLedge = this.settingGroup.create(
+        let sandLedgeImage = new Phaser.Image(
+            this.game,
             Config.SettingSandLedgePos.X,
             Config.SettingSandLedgePos.Y,
             Config.LedgesAtlasName,
             Config.LedgesAtlasKey.SandLedge1
         );
-        sandLedge.anchor.setTo(
+        sandLedgeImage.anchor.setTo(
             Config.SettingSandLedgePos.Anchor.X,
             Config.SettingSandLedgePos.Anchor.Y
         );
+        this.settingMenu.addAsset("sandLedge", sandLedgeImage);
 
         // 彈跳階梯配置圖案
-        let jumpLedge = this.settingGroup.create(
+        let jumpLedgeImage = new Phaser.Image(
+            this.game,
             Config.SettingJumpLedgePos.X,
             Config.SettingJumpLedgePos.Y,
             Config.LedgesAtlasName,
             Config.LedgesAtlasKey.JumpLedge1
         );
-        jumpLedge.anchor.setTo(
+        jumpLedgeImage.anchor.setTo(
             Config.SettingJumpLedgePos.Anchor.X,
             Config.SettingJumpLedgePos.Anchor.Y
         );
+        this.settingMenu.addAsset("jumpLedge", jumpLedgeImage);
 
         // 滾動階梯配置圖案
-        let rollLedge = this.settingGroup.create(
+        let rollLedgeImage = new Phaser.Image(
+            this.game,
             Config.SettingRollLedgePos.X,
             Config.SettingRollLedgePos.Y,
             Config.LedgesAtlasName,
             Config.LedgesAtlasKey.LeftLedge1
         );
-        rollLedge.anchor.setTo(
+        rollLedgeImage.anchor.setTo(
             Config.SettingRollLedgePos.Anchor.X,
             Config.SettingRollLedgePos.Anchor.Y
         );
+        this.settingMenu.addAsset("rollLedge", rollLedgeImage);
 
         // 從cookie載入配置設定
         let setting = Utils.loadDownstairsGameSetting();
@@ -260,10 +239,9 @@ class MainMenuState extends Phaser.State {
             Config.MainTextureAtlasKey.CheckBox1,
             Config.MainTextureAtlasKey.CheckBox2
         );
-        this.game.add.existing(soundCheckBox);
         soundCheckBox.input.priorityID = this.settingButtonIputPriority;
         soundCheckBox.input.useHandCursor = true;
-        this.soundCheckBox = soundCheckBox;
+        this.settingMenu.addInput("soundCheckBox", soundCheckBox);
 
         // 沙型階梯開關按鈕
         let sandLedgeCheckBox = new ToggleButton(
@@ -277,10 +255,9 @@ class MainMenuState extends Phaser.State {
             Config.MainTextureAtlasKey.CheckBox1,
             Config.MainTextureAtlasKey.CheckBox2
         );
-        this.game.add.existing(sandLedgeCheckBox);
         sandLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
         sandLedgeCheckBox.input.useHandCursor = true;
-        this.sandLedgeCheckBox = sandLedgeCheckBox;
+        this.settingMenu.addInput("sandLedgeCheckBox", sandLedgeCheckBox);
 
         // 彈跳階梯開關按鈕
         let jumpLedgeCheckBox = new ToggleButton(
@@ -294,10 +271,9 @@ class MainMenuState extends Phaser.State {
             Config.MainTextureAtlasKey.CheckBox1,
             Config.MainTextureAtlasKey.CheckBox2
         );
-        this.game.add.existing(jumpLedgeCheckBox);
         jumpLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
         jumpLedgeCheckBox.input.useHandCursor = true;
-        this.jumpLedgeCheckBox = jumpLedgeCheckBox;
+        this.settingMenu.addInput("jumpLedgeCheckBox", jumpLedgeCheckBox);
 
         // 滾動階梯開關按鈕
         let rollLedgeCheckBox = new ToggleButton(
@@ -311,62 +287,21 @@ class MainMenuState extends Phaser.State {
             Config.MainTextureAtlasKey.CheckBox1,
             Config.MainTextureAtlasKey.CheckBox2
         );
-        this.game.add.existing(rollLedgeCheckBox);
         rollLedgeCheckBox.input.priorityID = this.settingButtonIputPriority;
         rollLedgeCheckBox.input.useHandCursor = true;
-        this.rollLedgeCheckBox = rollLedgeCheckBox;
+        this.settingMenu.addInput("rollLedgeCheckBox", rollLedgeCheckBox);
     }
 
     showSettingMenu() {
         this.settingBtn.scale.setTo(1.0);
         this.settingBtn.inputEnabled = false;
-
-        this.maskBox.visible = true;
-        this.maskBox.inputEnabled = true;
-
-        this.settingBox.visible = true;
-        this.settingBox.inputEnabled = true;
-        this.settingGroup.visible = true;
-
-        this.soundCheckBox.visible = true;
-        this.soundCheckBox.inputEnabled = true;
-        this.soundCheckBox.input.useHandCursor = true;
-
-        this.sandLedgeCheckBox.visible = true;
-        this.sandLedgeCheckBox.inputEnabled = true;
-        this.sandLedgeCheckBox.input.useHandCursor = true;
-
-        this.jumpLedgeCheckBox.visible = true;
-        this.jumpLedgeCheckBox.inputEnabled = true;
-        this.jumpLedgeCheckBox.input.useHandCursor = true;
-
-        this.rollLedgeCheckBox.visible = true;
-        this.rollLedgeCheckBox.inputEnabled = true;
-        this.rollLedgeCheckBox.input.useHandCursor = true;
+        this.settingMenu.showAll();
     }
 
     hideSettingMenu() {
         this.settingBtn.inputEnabled = true;
         this.settingBtn.input.useHandCursor = true;
-
-        this.maskBox.visible = false;
-        this.maskBox.inputEnabled = false;
-
-        this.settingBox.visible = false;
-        this.settingBox.inputEnabled = false;
-        this.settingGroup.visible = false;
-
-        this.soundCheckBox.visible = false;
-        this.soundCheckBox.inputEnabled = false;
-
-        this.sandLedgeCheckBox.visible = false;
-        this.sandLedgeCheckBox.inputEnabled = false;
-
-        this.jumpLedgeCheckBox.visible = false;
-        this.jumpLedgeCheckBox.inputEnabled = false;
-
-        this.rollLedgeCheckBox.visible = false;
-        this.rollLedgeCheckBox.inputEnabled = false;
+        this.settingMenu.hideAll();
     }
 
     // events callback
@@ -401,50 +336,61 @@ class MainMenuState extends Phaser.State {
     }
 
     hideSettingMenuEvents() {
-        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.maskBoxPainter) === false ||
-            Utils.checkMouseInObject(this.game.input.mousePointer, this.settingBoxPainter) === true) {
+        let mouseOnMask = Utils.checkMouseInObject(
+            this.game.input.mousePointer,
+            this.settingMenu.inputs["mask"].graphic
+        );
+        let mouseOnBox = Utils.checkMouseInObject(
+            this.game.input.mousePointer,
+            this.settingMenu.inputs["mask"].graphic
+        );
+        if (mouseOnMask === false || mouseOnBox === true) {
             return;
         }
         this.hideSettingMenu();
     }
 
     toggleSounds() {
-        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.soundCheckBox) === false) {
+        let soundCheckBox = this.settingMenu.inputs["soundCheckBox"];
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, soundCheckBox) === false) {
             return;
         }
-        this.soundCheckBox.toggle();
+        soundCheckBox.toggle();
         let setting = Utils.loadDownstairsGameSetting();
-        setting.Sounds = this.soundCheckBox.isToggle;
+        setting.Sounds = soundCheckBox.isToggle;
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
 
     toggleSandLedge() {
-        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.sandLedgeCheckBox) === false) {
+        let sandLedgeCheckBox = this.settingMenu.inputs["sandLedgeCheckBox"];
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, sandLedgeCheckBox) === false) {
             return;
         }
-        this.sandLedgeCheckBox.toggle();
+        sandLedgeCheckBox.toggle();
         let setting = Utils.loadDownstairsGameSetting();
-        setting.SandLedge = this.sandLedgeCheckBox.isToggle;
+        setting.SandLedge = sandLedgeCheckBox.isToggle;
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
 
     toggleJumpLedge() {
-        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.jumpLedgeCheckBox) === false) {
+        let jumpLedgeCheckBox = this.settingMenu.inputs["jumpLedgeCheckBox"];
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, jumpLedgeCheckBox) === false) {
             return;
         }
-        this.jumpLedgeCheckBox.toggle();
+        jumpLedgeCheckBox.toggle();
         let setting = Utils.loadDownstairsGameSetting();
-        setting.JumpLedge = this.jumpLedgeCheckBox.isToggle;
+        setting.JumpLedge = jumpLedgeCheckBox.isToggle;
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
 
     toggleRollLedge() {
-        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.rollLedgeCheckBox) === false) {
+        let rollLedgeCheckBox = this.settingMenu.inputs["rollLedgeCheckBox"];
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, rollLedgeCheckBox) === false) {
             return;
         }
-        this.rollLedgeCheckBox.toggle();
+        rollLedgeCheckBox.toggle();
         let setting = Utils.loadDownstairsGameSetting();
-        setting.RollLedge = this.rollLedgeCheckBox.isToggle;
+        setting.RollLedge = rollLedgeCheckBox.isToggle;
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
 }
