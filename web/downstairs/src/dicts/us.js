@@ -6,5 +6,7 @@ export default {
     PlayOnlineText: "Play Online",
     SettingText: "Setting",
     PauseText: "Pause",
-    ContinueText: "Continue"
+    ContinueText: "Continue",
+    PauseHintText: "Press Space/ESC to Pause",
+    StartText: "Start",
 };

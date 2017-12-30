@@ -30,8 +30,8 @@ class Play1PState extends Phaser.State {
         this.soundSetting = null;
         this.ledgesRateSetting = null;
 
-
         // pause menu objects
+        this.pauseToggle = false;
         this.pauseGroup = null;
         this.soundCheckBox = null;
         this.maskBoxPainter = null;
@@ -40,11 +40,20 @@ class Play1PState extends Phaser.State {
         this.pauseBox = null;
         this.continueBtn = null;
 
+        // count down objects
+        this.countDownRunning = false;
+        this.countTime = 3;
+        this.countDownMaskBoxPainter = null;
+        this.countDownMaskBox = null;
+        this.countDownText = null;
+        this.countDownHintText = null;
 
+        // input priority
         this.pauseButtonIputPriority = 0;
     }
     init() {
         this.game.onPause.add(this.pauseGame, this);
+        this.game.onResume.add(this.pauseGame, this);
     }
     create(game) {
         // group顯示順序初始化
@@ -154,9 +163,11 @@ class Play1PState extends Phaser.State {
         );
         this.mainGameBox = mainGameBox;
 
+        // 加入倒數計時
+        this.addCountDown();
+
         // 加入並隱藏暫停選單
         this.addPauseMenu();
-        this.hidePauseMenu();
 
         // 監聽輸入: 上下左右鍵
         this.cursors = game.input.keyboard.createCursorKeys();
@@ -166,11 +177,17 @@ class Play1PState extends Phaser.State {
         this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         // 開始移動所有ledges
         this.moveLedges();
+
+        this.pauseGame();
+        this.pauseToggle = false;
+        this.game.time.events.resume();
+        this.hidePauseMenu();
+        this.runCountDown(this.startGame.bind(this));
     }
 
     update(game) {
-        if (this.spaceKey.isDown || this.escKey.isDown) {
-            this.pauseGame();
+        if (this.spaceKey.justDown || this.escKey.justDown) {
+            this.togglePauseGame();
         }
         // 偵測玩家角色與自訂游戲邊框的碰撞
         game.physics.arcade.collide(this.player, this.boundsGroup);
@@ -226,6 +243,102 @@ class Play1PState extends Phaser.State {
             //todo: fix dec
             this.player.body.velocity.y = -800;
         }
+    }
+
+    startGame() {
+        this.hideCountDown();
+        this.resumeGame();
+    }
+
+    addCountDown() {
+        // 建立遮罩
+        let maskPainter = this.game.add.graphics(Config.CameraMaskDrawBoxPos.X, Config.CameraMaskDrawBoxPos.Y);
+        maskPainter.beginFill(
+            Config.DefaultDrawMaskBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawMaskBoxStyle.FillStyle.FillAlpha
+        );
+        maskPainter.drawRect(
+            0,
+            0,
+            Config.CameraMaskDrawBoxSize.Width,
+            Config.CameraMaskDrawBoxSize.Height
+        );
+        let maskBox = this.game.add.image(0, 0);
+        maskBox.addChild(maskPainter);
+        this.countDownMaskBoxPainter = maskPainter;
+        this.countDownMaskBox = maskBox;
+
+        // 倒數數字
+        let countDownText = new Phaser.Text(
+            this.game,
+            Config.CountDownTextPos.X,
+            Config.CountDownTextPos.Y,
+            this.countTime,
+            Config.PlayBold200FontStyle
+        );
+        countDownText.anchor.setTo(
+            Config.CountDownTextPos.Anchor.X,
+            Config.CountDownTextPos.Anchor.Y
+        );
+        this.countDownText = countDownText;
+        this.game.add.existing(countDownText);
+
+        // 遊戲提示文字
+        let countDownHintText = new Phaser.Text(
+            this.game,
+            Config.CountDownPauseHintText.X,
+            Config.CountDownPauseHintText.Y,
+            this.Dict.PauseHintText,
+            Config.DefaultFontStyle
+        );
+        countDownHintText.anchor.setTo(
+            Config.CountDownPauseHintText.Anchor.X,
+            Config.CountDownPauseHintText.Anchor.Y
+        );
+        this.countDownHintText = countDownHintText;
+        this.game.add.existing(countDownHintText);
+    }
+
+    runCountDown(callback) {
+        this.countDownRunning = true;
+        let counterText = this.countTime;
+        this.countDownText.text = counterText;
+        let start = false;
+        this.showCountDown();
+        let loop = this.game.time.events.loop(
+            Phaser.Timer.SECOND * 0.65,
+            () => {
+                if (start) {
+                    this.hideCountDown();
+                    this.countDownRunning = false;
+                    this.game.time.events.remove(loop);
+                    if (callback) {
+                        callback();
+                    }
+                    return;
+                }
+                counterText -= 1;
+                if (counterText < 0) {
+                    start = true;
+                    counterText = this.Dict.StartText;
+                }
+                this.countDownText.text = counterText;
+            },
+            this);
+    }
+
+    showCountDown() {
+        this.countDownMaskBoxPainter.visible = true;
+        this.countDownMaskBox.visible = true;
+        this.countDownText.visible = true;
+        this.countDownHintText.visible = true;
+    }
+
+    hideCountDown() {
+        this.countDownMaskBoxPainter.visible = false;
+        this.countDownMaskBox.visible = false;
+        this.countDownText.visible = false;
+        this.countDownHintText.visible = false;
     }
 
     addPauseMenu() {
@@ -329,7 +442,7 @@ class Play1PState extends Phaser.State {
         );
         continueBtn.inputEnabled = true;
         continueBtn.input.useHandCursor = true;
-        continueBtn.events.onInputUp.add(this.resumeGame.bind(this));
+        continueBtn.events.onInputUp.add(this.continueGame.bind(this));
         continueBtn.events.onInputOver.add(Events.scaleBig);
         continueBtn.events.onInputOut.add(Events.scaleOrigin);
         continueBtn.input.priorityID = this.pauseButtonIputPriority;
@@ -377,7 +490,34 @@ class Play1PState extends Phaser.State {
         Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
     }
 
+    continueGame() {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.continueBtn) === false) {
+            return;
+        }
+        this.pauseToggle = !this.pauseToggle;
+        this.game.time.events.resume();
+        this.hidePauseMenu();
+        if (this.countDownRunning === false) {
+            this.runCountDown(this.resumeGame.bind(this));
+        }
+    }
+
+    togglePauseGame() {
+        this.pauseToggle = !this.pauseToggle;
+        if (this.pauseToggle) {
+            this.pauseGame();
+        } else {
+            this.game.time.events.resume();
+            this.hidePauseMenu();
+            if (this.countDownRunning === false) {
+                this.runCountDown(this.resumeGame.bind(this));
+            }
+        }
+    }
+
     pauseGame() {
+        this.pauseToggle = true;
+        this.game.time.events.pause();
         this.game.physics.arcade.isPaused = true;
         this.player.animations.paused = true;
         let ledgeSet = this.ledgesGroup.getAll();
@@ -388,15 +528,13 @@ class Play1PState extends Phaser.State {
     }
 
     resumeGame() {
-        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.continueBtn) === false) {
-            return;
-        }
         this.hidePauseMenu();
         this.player.animations.paused = false;
         let ledgeSet = this.ledgesGroup.getAll();
         ledgeSet.forEach((item) => {
             item.animations.paused = false;
         });
+        this.game.time.events.resume();
         this.game.physics.arcade.isPaused = false;
     }
 

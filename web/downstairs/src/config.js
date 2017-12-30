@@ -11,6 +11,11 @@ export const PlayBold34FontStyle = {
     fill: "#000000",
     align: "center"
 };
+export const PlayBold200FontStyle = {
+    font: "200px Play",
+    fill: "#000000",
+    align: "center"
+};
 export const DefaultDrawBoxStyle = {
     LineStyle:{
         LineWidth: 2,
@@ -495,5 +500,15 @@ export const PauseMenuSoundCheckBoxPos = {
 export const PauseMenuContinueButtonPos = {
     X: WorldWidth / 2,
     Y: 550 * PixelScaleRate,
+    Anchor: CenterAnchor
+};
+export const CountDownTextPos = {
+    X: WorldWidth / 2,
+    Y: 400 * PixelScaleRate,
+    Anchor: CenterAnchor
+};
+export const CountDownPauseHintText = {
+    X: WorldWidth / 2,
+    Y: 710 * PixelScaleRate,
     Anchor: CenterAnchor
 };
