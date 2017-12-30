@@ -5,4 +5,6 @@ export default {
     Play2PText: "Play 2P",
     PlayOnlineText: "Play Online",
     SettingText: "Setting",
+    PauseText: "Pause",
+    ContinueText: "Continue"
 };

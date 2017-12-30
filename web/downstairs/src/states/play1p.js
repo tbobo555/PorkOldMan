@@ -4,8 +4,48 @@ import * as Motion from  "../events/motions";
 import * as Utils from "../weblogic/utils";
 import Ledge from "../objects/ledge";
 import Player from "../objects/player";
+import DictUS from "../dicts/us";
+import ToggleButton from "../objects/togglebutton";
+import * as Events from "../events/events";
 
-class Play1PState extends Phaser.State{
+class Play1PState extends Phaser.State {
+    constructor() {
+        super();
+        // 載入字典檔
+        this.Dict = DictUS;
+
+        // key objects
+        this.cursors = null;
+        this.escKey = null;
+        this.spaceKey = null;
+
+        // play state objects
+        this.mainBox = null;
+        this.mainGameBox = null;
+        this.player = null;
+        this.boundsGroup = null;
+        this.ledgesGroup = null;
+
+        // game setting
+        this.soundSetting = null;
+        this.ledgesRateSetting = null;
+
+
+        // pause menu objects
+        this.pauseGroup = null;
+        this.soundCheckBox = null;
+        this.maskBoxPainter = null;
+        this.maskBox = null;
+        this.pauseBoxPainter = null;
+        this.pauseBox = null;
+        this.continueBtn = null;
+
+
+        this.pauseButtonIputPriority = 0;
+    }
+    init() {
+        this.game.onPause.add(this.pauseGame, this);
+    }
     create(game) {
         // group顯示順序初始化
         this.ledgesGroup = game.add.group();
@@ -23,17 +63,18 @@ class Play1PState extends Phaser.State{
 
         // 從cookie載入ledges設定
         let defaultSetting = Config.DefaultLedgeNameSet;
-        let ledgesSetting = Utils.loadDownstairsGameSetting();
-        if (ledgesSetting.SandLedge !== true) {
+        let cookieSetting = Utils.loadDownstairsGameSetting();
+        if (cookieSetting.SandLedge !== true) {
             defaultSetting = Utils.removeArrayElementByValue(defaultSetting, Config.LedgeTypes.Sand);
         }
-        if (ledgesSetting.JumpLedge !== true) {
+        if (cookieSetting.JumpLedge !== true) {
             defaultSetting = Utils.removeArrayElementByValue(defaultSetting, Config.LedgeTypes.Jump);
         }
-        if (ledgesSetting.RollLedge !== true) {
+        if (cookieSetting.RollLedge !== true) {
             defaultSetting = Utils.removeArrayElementByValue(defaultSetting, Config.LedgeTypes.Right);
             defaultSetting = Utils.removeArrayElementByValue(defaultSetting, Config.LedgeTypes.Right);
         }
+        this.soundSetting = cookieSetting.Sounds;
 
         // 配置每種階梯的出現率
         let resultSetting = [];
@@ -113,14 +154,24 @@ class Play1PState extends Phaser.State{
         );
         this.mainGameBox = mainGameBox;
 
+        // 加入並隱藏暫停選單
+        this.addPauseMenu();
+        this.hidePauseMenu();
+
         // 監聽輸入: 上下左右鍵
         this.cursors = game.input.keyboard.createCursorKeys();
-
+        // 監聽esc鍵
+        this.escKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+        // 監聽space鍵
+        this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         // 開始移動所有ledges
         this.moveLedges();
     }
 
     update(game) {
+        if (this.spaceKey.isDown || this.escKey.isDown) {
+            this.pauseGame();
+        }
         // 偵測玩家角色與自訂游戲邊框的碰撞
         game.physics.arcade.collide(this.player, this.boundsGroup);
 
@@ -177,6 +228,178 @@ class Play1PState extends Phaser.State{
         }
     }
 
+    addPauseMenu() {
+        // 建立遮罩
+        let maskPainter = this.game.add.graphics(Config.CameraMaskDrawBoxPos.X, Config.CameraMaskDrawBoxPos.Y);
+        maskPainter.beginFill(
+            Config.DefaultDrawMaskBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawMaskBoxStyle.FillStyle.FillAlpha
+        );
+        maskPainter.drawRect(
+            0,
+            0,
+            Config.CameraMaskDrawBoxSize.Width,
+            Config.CameraMaskDrawBoxSize.Height
+        );
+        let maskBox = this.game.add.image(0, 0);
+        maskBox.addChild(maskPainter);
+        this.maskBoxPainter = maskPainter;
+        this.maskBox = maskBox;
+
+        // 建立 pause 選單邊框
+        let pauseBoxPainter = this.game.add.graphics(Config.PauseMenuDrawBoxPos.X, Config.PauseMenuDrawBoxPos.Y);
+        pauseBoxPainter.beginFill(
+            Config.DefaultDrawBoxStyle.FillStyle.FillColor,
+            Config.DefaultDrawBoxStyle.FillStyle.FillAlpha
+        );
+        pauseBoxPainter.lineStyle(
+            Config.DefaultDrawBoxStyle.LineStyle.LineWidth,
+            Config.DefaultDrawBoxStyle.LineStyle.LineColor,
+            Config.DefaultDrawBoxStyle.LineStyle.LineAlpha
+        );
+        pauseBoxPainter.drawRoundedRect(
+            0,
+            0,
+            Config.PauseMenuDrawBoxSize.Width,
+            Config.PauseMenuDrawBoxSize.Height,
+            Config.PauseMenuDrawBoxSize.Radius
+        );
+        let pauseBox = this.game.add.image(0, 0);
+        pauseBox.addChild(pauseBoxPainter);
+        this.pauseBoxPainter = pauseBoxPainter;
+        this.pauseBox = pauseBox;
+
+        // 建立 pause 選單會使用到的靜態圖
+        this.pauseGroup = this.game.add.group();
+
+        // pause選單的標題
+        let pauseMenuTitle = new Phaser.Text(
+            this.game,
+            Config.PauseMenuTitlePos.X,
+            Config.PauseMenuTitlePos.Y,
+            this.Dict.PauseText,
+            Config.DefaultFontStyle
+        );
+        pauseMenuTitle.anchor.setTo(
+            Config.PauseMenuTitlePos.Anchor.X,
+            Config.PauseMenuTitlePos.Anchor.Y
+        );
+        this.pauseGroup.add(pauseMenuTitle);
+
+        // 音效設定圖案
+        let sounds = this.pauseGroup.create(
+            Config.PauseMenuSoundPos.X,
+            Config.PauseMenuSoundPos.Y,
+            Config.MainTextureAtlasName,
+            Config.MainTextureAtlasKey.Sounds
+        );
+        sounds.anchor.setTo(
+            Config.PauseMenuSoundPos.Anchor.X,
+            Config.PauseMenuSoundPos.Anchor.Y,
+        );
+
+        // 音效開關按鈕
+        let soundCheckBox = new ToggleButton (
+            this.game,
+            Config.PauseMenuSoundCheckBoxPos.X,
+            Config.PauseMenuSoundCheckBoxPos.Y,
+            Config.MainTextureAtlasName,
+            this.toggleSounds.bind(this),
+            this,
+            this.soundSetting,
+            Config.MainTextureAtlasKey.CheckBox1,
+            Config.MainTextureAtlasKey.CheckBox2
+        );
+        this.game.add.existing(soundCheckBox);
+        soundCheckBox.input.priorityID = this.pauseButtonIputPriority;
+        soundCheckBox.input.useHandCursor = true;
+        this.soundCheckBox = soundCheckBox;
+
+        // 建立 continue 按鈕
+        let continueBtn = new Phaser.Text(
+            this.game,
+            Config.PauseMenuContinueButtonPos.X,
+            Config.PauseMenuContinueButtonPos.Y,
+            this.Dict.ContinueText,
+            Config.DefaultFontStyle
+        );
+        continueBtn.anchor.setTo(
+            Config.PauseMenuContinueButtonPos.Anchor.X,
+            Config.PauseMenuContinueButtonPos.Anchor.Y
+        );
+        continueBtn.inputEnabled = true;
+        continueBtn.input.useHandCursor = true;
+        continueBtn.events.onInputUp.add(this.resumeGame.bind(this));
+        continueBtn.events.onInputOver.add(Events.scaleBig);
+        continueBtn.events.onInputOut.add(Events.scaleOrigin);
+        continueBtn.input.priorityID = this.pauseButtonIputPriority;
+        this.game.add.existing(continueBtn);
+        this.continueBtn = continueBtn;
+    }
+
+    showPauseMenu() {
+        this.maskBoxPainter.visible = true;
+        this.maskBox.visible = true;
+        this.pauseBoxPainter.visible = true;
+        this.pauseBox.visible = true;
+        this.pauseGroup.visible = true;
+
+        this.soundCheckBox.visible = true;
+        this.soundCheckBox.inputEnabled = true;
+        this.soundCheckBox.input.useHandCursor = true;
+        this.continueBtn.visible = true;
+        this.continueBtn.scale.setTo(1.0);
+        this.continueBtn.inputEnabled = true;
+        this.continueBtn.input.useHandCursor = true;
+    }
+
+    hidePauseMenu() {
+        this.maskBoxPainter.visible = false;
+        this.maskBox.visible = false;
+        this.pauseBoxPainter.visible = false;
+        this.pauseBox.visible = false;
+        this.pauseGroup.visible = false;
+
+        this.soundCheckBox.visible = false;
+        this.soundCheckBox.inputEnabled = false;
+        this.continueBtn.visible = false;
+        this.continueBtn.inputEnabled = false;
+    }
+
+    toggleSounds() {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.soundCheckBox) === false) {
+            return;
+        }
+        this.soundCheckBox.toggle();
+        let setting = Utils.loadDownstairsGameSetting();
+        setting.Sounds = this.soundCheckBox.isToggle;
+        this.soundSetting = setting.Sounds;
+        Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
+    }
+
+    pauseGame() {
+        this.game.physics.arcade.isPaused = true;
+        this.player.animations.paused = true;
+        let ledgeSet = this.ledgesGroup.getAll();
+        ledgeSet.forEach((item) => {
+            item.animations.paused = true;
+        });
+        this.showPauseMenu();
+    }
+
+    resumeGame() {
+        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.continueBtn) === false) {
+            return;
+        }
+        this.hidePauseMenu();
+        this.player.animations.paused = false;
+        let ledgeSet = this.ledgesGroup.getAll();
+        ledgeSet.forEach((item) => {
+            item.animations.paused = false;
+        });
+        this.game.physics.arcade.isPaused = false;
+    }
+
     initLedgesPosition() {
         // 初始化所有階梯的位置與類型
         let ledgeSet = this.ledgesGroup.getAll();
@@ -211,8 +434,7 @@ class Play1PState extends Phaser.State{
         );
         this.game.physics.arcade.enable(boundsUp);
         boundsUp.body.immovable = true;
-        this.boundsUp = boundsUp;
-        this.boundsGroup.add(this.boundsUp);
+        this.boundsGroup.add(boundsUp);
 
         // 建置下方邊界
         let boundsBottom = this.game.add.graphics(
@@ -231,8 +453,7 @@ class Play1PState extends Phaser.State{
         );
         this.game.physics.arcade.enable(boundsBottom);
         boundsBottom.body.immovable = true;
-        this.boundsBottom = boundsBottom;
-        this.boundsGroup.add(this.boundsBottom);
+        this.boundsGroup.add(boundsBottom);
 
         // 建置左方邊界
         let boundsLeft = this.game.add.graphics(
@@ -251,8 +472,7 @@ class Play1PState extends Phaser.State{
         );
         this.game.physics.arcade.enable(boundsLeft);
         boundsLeft.body.immovable = true;
-        this.boundsLeft = boundsLeft;
-        this.boundsGroup.add(this.boundsLeft);
+        this.boundsGroup.add(boundsLeft);
 
         // 建置右方邊界
         let boundsRight = this.game.add.graphics(
@@ -271,8 +491,7 @@ class Play1PState extends Phaser.State{
         );
         this.game.physics.arcade.enable(boundsRight);
         boundsRight.body.immovable = true;
-        this.boundsRight = boundsRight;
-        this.boundsGroup.add(this.boundsRight);
+        this.boundsGroup.add(boundsRight);
     }
 
     moveLedges() {

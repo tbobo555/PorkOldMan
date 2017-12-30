@@ -357,18 +357,22 @@ export const SettingRollLedgePos = {
 export const SettingSoundCheckBoxPos = {
     X: 520 * PixelScaleRate,
     Y: 322 * PixelScaleRate,
+    Anchor: LeftTopAnchor
 };
 export const SettingSandLedgeCheckBoxPos = {
     X: 520 * PixelScaleRate,
     Y: 402 * PixelScaleRate,
+    Anchor: LeftTopAnchor
 };
 export const SettingJumpLedgeCheckBoxPos = {
     X: 520 * PixelScaleRate,
     Y: 482 * PixelScaleRate,
+    Anchor: LeftTopAnchor
 };
 export const SettingRollLedgeCheckBoxPos = {
     X: 520 * PixelScaleRate,
     Y: 562 * PixelScaleRate,
+    Anchor: LeftTopAnchor
 };
 
 // for play state
@@ -474,4 +478,22 @@ export const GameBoundsRightDrawBoxPos = {
 export const GameBoundsRightDrawBoxSize = {
     Width: 60 * PixelScaleRate,
     Height: WorldHeight
+};
+export const PauseMenuDrawBoxPos = SettingMenuDrawBoxPos;
+export const PauseMenuDrawBoxSize = SettingMenuDrawBoxSize;
+export const PauseMenuTitlePos = SettingMenuTitlePos;
+export const PauseMenuSoundPos = {
+    X: 370 * PixelScaleRate,
+    Y: 400 * PixelScaleRate,
+    Anchor: CenterAnchor
+};
+export const PauseMenuSoundCheckBoxPos = {
+    X: 520 * PixelScaleRate,
+    Y: 382 * PixelScaleRate,
+    Anchor: LeftTopAnchor
+};
+export const PauseMenuContinueButtonPos = {
+    X: WorldWidth / 2,
+    Y: 550 * PixelScaleRate,
+    Anchor: CenterAnchor
 };
