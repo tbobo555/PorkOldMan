@@ -5,8 +5,8 @@ import * as Utils from "../weblogic/utils";
 import Ledge from "../objects/ledge";
 import Player from "../objects/player";
 import DictUS from "../dicts/us";
-import ToggleButton from "../objects/togglebutton";
-import * as Events from "../events/events";
+import CountDownEffect from "../blocks/countdowneffect";
+import PauseMenu from "../blocks/pausemenu";
 
 class Play1PState extends Phaser.State {
     constructor() {
@@ -27,35 +27,25 @@ class Play1PState extends Phaser.State {
         this.ledgesGroup = null;
 
         // game setting
+        this.isPause = false;
+        this.pauseToggler = false;
         this.soundSetting = null;
         this.ledgesRateSetting = null;
 
         // pause menu objects
-        this.pauseToggle = false;
-        this.pauseGroup = null;
-        this.soundCheckBox = null;
-        this.maskBoxPainter = null;
-        this.maskBox = null;
-        this.pauseBoxPainter = null;
-        this.pauseBox = null;
-        this.continueBtn = null;
+        this.pauseMenu = null;
 
         // count down objects
-        this.countDownRunning = false;
-        this.countTime = 3;
-        this.countDownMaskBoxPainter = null;
-        this.countDownMaskBox = null;
-        this.countDownText = null;
-        this.countDownHintText = null;
+        this.countDownEffect = null;
 
         // input priority
         this.pauseButtonIputPriority = 0;
     }
-    init() {
+
+    create(game) {
         this.game.onPause.add(this.pauseGame, this);
         this.game.onResume.add(this.pauseGame, this);
-    }
-    create(game) {
+
         // group顯示順序初始化
         this.ledgesGroup = game.add.group();
         this.ledgesGroup.enableBody = true;
@@ -164,10 +154,10 @@ class Play1PState extends Phaser.State {
         this.mainGameBox = mainGameBox;
 
         // 加入倒數計時
-        this.addCountDown();
+        this.initCountDownEffect();
 
         // 加入並隱藏暫停選單
-        this.addPauseMenu();
+        this.initPauseMenu();
 
         // 監聽輸入: 上下左右鍵
         this.cursors = game.input.keyboard.createCursorKeys();
@@ -178,16 +168,16 @@ class Play1PState extends Phaser.State {
         // 開始移動所有ledges
         this.moveLedges();
 
-        this.pauseGame();
-        this.pauseToggle = false;
-        this.game.time.events.resume();
-        this.hidePauseMenu();
-        this.runCountDown(this.startGame.bind(this));
+        // 開始遊戲！
+        this.startGame();
     }
 
     update(game) {
         if (this.spaceKey.justDown || this.escKey.justDown) {
-            this.togglePauseGame();
+            this.togglePauseEvent();
+        }
+        if (this.isPause) {
+            return;
         }
         // 偵測玩家角色與自訂游戲邊框的碰撞
         game.physics.arcade.collide(this.player, this.boundsGroup);
@@ -246,277 +236,32 @@ class Play1PState extends Phaser.State {
     }
 
     startGame() {
-        this.hideCountDown();
-        this.resumeGame();
+        this.pauseGame();
+        this.pauseToggler = false;
+        this.pauseMenu.hideAll();
+        this.runCountDown(this.resumeGame.bind(this));
     }
 
-    addCountDown() {
-        // 建立遮罩
-        let maskPainter = this.game.add.graphics(Config.CameraMaskDrawBoxPos.X, Config.CameraMaskDrawBoxPos.Y);
-        maskPainter.beginFill(
-            Config.DefaultDrawMaskBoxStyle.FillStyle.FillColor,
-            Config.DefaultDrawMaskBoxStyle.FillStyle.FillAlpha
-        );
-        maskPainter.drawRect(
-            0,
-            0,
-            Config.CameraMaskDrawBoxSize.Width,
-            Config.CameraMaskDrawBoxSize.Height
-        );
-        let maskBox = this.game.add.image(0, 0);
-        maskBox.addChild(maskPainter);
-        this.countDownMaskBoxPainter = maskPainter;
-        this.countDownMaskBox = maskBox;
-
-        // 倒數數字
-        let countDownText = new Phaser.Text(
-            this.game,
-            Config.CountDownTextPos.X,
-            Config.CountDownTextPos.Y,
-            this.countTime,
-            Config.PlayBold200FontStyle
-        );
-        countDownText.anchor.setTo(
-            Config.CountDownTextPos.Anchor.X,
-            Config.CountDownTextPos.Anchor.Y
-        );
-        this.countDownText = countDownText;
-        this.game.add.existing(countDownText);
-
-        // 遊戲提示文字
-        let countDownHintText = new Phaser.Text(
-            this.game,
-            Config.CountDownPauseHintText.X,
-            Config.CountDownPauseHintText.Y,
-            this.Dict.PauseHintText,
-            Config.DefaultFontStyle
-        );
-        countDownHintText.anchor.setTo(
-            Config.CountDownPauseHintText.Anchor.X,
-            Config.CountDownPauseHintText.Anchor.Y
-        );
-        this.countDownHintText = countDownHintText;
-        this.game.add.existing(countDownHintText);
+    initCountDownEffect() {
+        this.countDownEffect = new CountDownEffect(this.game);
     }
 
     runCountDown(callback) {
-        this.countDownRunning = true;
-        let counterText = this.countTime;
-        this.countDownText.text = counterText;
-        let start = false;
-        this.showCountDown();
-        let loop = this.game.time.events.loop(
-            Phaser.Timer.SECOND * 0.65,
-            () => {
-                if (start) {
-                    this.hideCountDown();
-                    this.countDownRunning = false;
-                    this.game.time.events.remove(loop);
-                    if (callback) {
-                        callback();
-                    }
-                    return;
-                }
-                counterText -= 1;
-                if (counterText < 0) {
-                    start = true;
-                    counterText = this.Dict.StartText;
-                }
-                this.countDownText.text = counterText;
-            },
-            this);
-    }
-
-    showCountDown() {
-        this.countDownMaskBoxPainter.visible = true;
-        this.countDownMaskBox.visible = true;
-        this.countDownText.visible = true;
-        this.countDownHintText.visible = true;
-    }
-
-    hideCountDown() {
-        this.countDownMaskBoxPainter.visible = false;
-        this.countDownMaskBox.visible = false;
-        this.countDownText.visible = false;
-        this.countDownHintText.visible = false;
-    }
-
-    addPauseMenu() {
-        // 建立遮罩
-        let maskPainter = this.game.add.graphics(Config.CameraMaskDrawBoxPos.X, Config.CameraMaskDrawBoxPos.Y);
-        maskPainter.beginFill(
-            Config.DefaultDrawMaskBoxStyle.FillStyle.FillColor,
-            Config.DefaultDrawMaskBoxStyle.FillStyle.FillAlpha
-        );
-        maskPainter.drawRect(
-            0,
-            0,
-            Config.CameraMaskDrawBoxSize.Width,
-            Config.CameraMaskDrawBoxSize.Height
-        );
-        let maskBox = this.game.add.image(0, 0);
-        maskBox.addChild(maskPainter);
-        this.maskBoxPainter = maskPainter;
-        this.maskBox = maskBox;
-
-        // 建立 pause 選單邊框
-        let pauseBoxPainter = this.game.add.graphics(Config.PauseMenuDrawBoxPos.X, Config.PauseMenuDrawBoxPos.Y);
-        pauseBoxPainter.beginFill(
-            Config.DefaultDrawBoxStyle.FillStyle.FillColor,
-            Config.DefaultDrawBoxStyle.FillStyle.FillAlpha
-        );
-        pauseBoxPainter.lineStyle(
-            Config.DefaultDrawBoxStyle.LineStyle.LineWidth,
-            Config.DefaultDrawBoxStyle.LineStyle.LineColor,
-            Config.DefaultDrawBoxStyle.LineStyle.LineAlpha
-        );
-        pauseBoxPainter.drawRoundedRect(
-            0,
-            0,
-            Config.PauseMenuDrawBoxSize.Width,
-            Config.PauseMenuDrawBoxSize.Height,
-            Config.PauseMenuDrawBoxSize.Radius
-        );
-        let pauseBox = this.game.add.image(0, 0);
-        pauseBox.addChild(pauseBoxPainter);
-        this.pauseBoxPainter = pauseBoxPainter;
-        this.pauseBox = pauseBox;
-
-        // 建立 pause 選單會使用到的靜態圖
-        this.pauseGroup = this.game.add.group();
-
-        // pause選單的標題
-        let pauseMenuTitle = new Phaser.Text(
-            this.game,
-            Config.PauseMenuTitlePos.X,
-            Config.PauseMenuTitlePos.Y,
-            this.Dict.PauseText,
-            Config.DefaultFontStyle
-        );
-        pauseMenuTitle.anchor.setTo(
-            Config.PauseMenuTitlePos.Anchor.X,
-            Config.PauseMenuTitlePos.Anchor.Y
-        );
-        this.pauseGroup.add(pauseMenuTitle);
-
-        // 音效設定圖案
-        let sounds = this.pauseGroup.create(
-            Config.PauseMenuSoundPos.X,
-            Config.PauseMenuSoundPos.Y,
-            Config.MainTextureAtlasName,
-            Config.MainTextureAtlasKey.Sounds
-        );
-        sounds.anchor.setTo(
-            Config.PauseMenuSoundPos.Anchor.X,
-            Config.PauseMenuSoundPos.Anchor.Y,
-        );
-
-        // 音效開關按鈕
-        let soundCheckBox = new ToggleButton (
-            this.game,
-            Config.PauseMenuSoundCheckBoxPos.X,
-            Config.PauseMenuSoundCheckBoxPos.Y,
-            Config.MainTextureAtlasName,
-            this.toggleSounds.bind(this),
-            this,
-            this.soundSetting,
-            Config.MainTextureAtlasKey.CheckBox1,
-            Config.MainTextureAtlasKey.CheckBox2
-        );
-        this.game.add.existing(soundCheckBox);
-        soundCheckBox.input.priorityID = this.pauseButtonIputPriority;
-        soundCheckBox.input.useHandCursor = true;
-        this.soundCheckBox = soundCheckBox;
-
-        // 建立 continue 按鈕
-        let continueBtn = new Phaser.Text(
-            this.game,
-            Config.PauseMenuContinueButtonPos.X,
-            Config.PauseMenuContinueButtonPos.Y,
-            this.Dict.ContinueText,
-            Config.DefaultFontStyle
-        );
-        continueBtn.anchor.setTo(
-            Config.PauseMenuContinueButtonPos.Anchor.X,
-            Config.PauseMenuContinueButtonPos.Anchor.Y
-        );
-        continueBtn.inputEnabled = true;
-        continueBtn.input.useHandCursor = true;
-        continueBtn.events.onInputUp.add(this.continueGame.bind(this));
-        continueBtn.events.onInputOver.add(Events.scaleBig);
-        continueBtn.events.onInputOut.add(Events.scaleOrigin);
-        continueBtn.input.priorityID = this.pauseButtonIputPriority;
-        this.game.add.existing(continueBtn);
-        this.continueBtn = continueBtn;
-    }
-
-    showPauseMenu() {
-        this.maskBoxPainter.visible = true;
-        this.maskBox.visible = true;
-        this.pauseBoxPainter.visible = true;
-        this.pauseBox.visible = true;
-        this.pauseGroup.visible = true;
-
-        this.soundCheckBox.visible = true;
-        this.soundCheckBox.inputEnabled = true;
-        this.soundCheckBox.input.useHandCursor = true;
-        this.continueBtn.visible = true;
-        this.continueBtn.scale.setTo(1.0);
-        this.continueBtn.inputEnabled = true;
-        this.continueBtn.input.useHandCursor = true;
-    }
-
-    hidePauseMenu() {
-        this.maskBoxPainter.visible = false;
-        this.maskBox.visible = false;
-        this.pauseBoxPainter.visible = false;
-        this.pauseBox.visible = false;
-        this.pauseGroup.visible = false;
-
-        this.soundCheckBox.visible = false;
-        this.soundCheckBox.inputEnabled = false;
-        this.continueBtn.visible = false;
-        this.continueBtn.inputEnabled = false;
-    }
-
-    toggleSounds() {
-        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.soundCheckBox) === false) {
-            return;
-        }
-        this.soundCheckBox.toggle();
-        let setting = Utils.loadDownstairsGameSetting();
-        setting.Sounds = this.soundCheckBox.isToggle;
-        this.soundSetting = setting.Sounds;
-        Utils.setCookie(Config.GameSettingCookieName, JSON.stringify(setting), Config.GameSettingCookieExpiredDay);
-    }
-
-    continueGame() {
-        if (Utils.checkMouseInObject(this.game.input.mousePointer, this.continueBtn) === false) {
-            return;
-        }
-        this.pauseToggle = !this.pauseToggle;
         this.game.time.events.resume();
-        this.hidePauseMenu();
-        if (this.countDownRunning === false) {
-            this.runCountDown(this.resumeGame.bind(this));
-        }
+        this.countDownEffect.run(callback);
     }
 
-    togglePauseGame() {
-        this.pauseToggle = !this.pauseToggle;
-        if (this.pauseToggle) {
-            this.pauseGame();
-        } else {
-            this.game.time.events.resume();
-            this.hidePauseMenu();
-            if (this.countDownRunning === false) {
-                this.runCountDown(this.resumeGame.bind(this));
-            }
-        }
+    initPauseMenu() {
+        this.pauseMenu = new PauseMenu(
+            this.game,
+            this.pauseButtonIputPriority,
+            this.togglePauseEvent.bind(this)
+        );
     }
 
     pauseGame() {
-        this.pauseToggle = true;
+        this.isPause = true;
+        this.pauseToggler = true;
         this.game.time.events.pause();
         this.game.physics.arcade.isPaused = true;
         this.player.animations.paused = true;
@@ -524,11 +269,11 @@ class Play1PState extends Phaser.State {
         ledgeSet.forEach((item) => {
             item.animations.paused = true;
         });
-        this.showPauseMenu();
+        this.pauseMenu.showAll();
     }
 
     resumeGame() {
-        this.hidePauseMenu();
+        this.pauseMenu.hideAll();
         this.player.animations.paused = false;
         let ledgeSet = this.ledgesGroup.getAll();
         ledgeSet.forEach((item) => {
@@ -536,6 +281,21 @@ class Play1PState extends Phaser.State {
         });
         this.game.time.events.resume();
         this.game.physics.arcade.isPaused = false;
+        this.pauseToggler = false;
+        this.isPause = false;
+    }
+
+    togglePauseEvent() {
+        this.pauseToggler = !this.pauseToggler;
+        if (this.pauseToggler) {
+            this.pauseGame();
+        } else {
+            this.pauseMenu.hideAll();
+            this.game.time.events.resume();
+            if (!this.countDownEffect.isRunning) {
+                this.runCountDown(this.resumeGame.bind(this));
+            }
+        }
     }
 
     initLedgesPosition() {

@@ -342,7 +342,7 @@ class MainMenuState extends Phaser.State {
         );
         let mouseOnBox = Utils.checkMouseInObject(
             this.game.input.mousePointer,
-            this.settingMenu.inputs["mask"].graphic
+            this.settingMenu.inputs["box"].graphic
         );
         if (mouseOnMask === false || mouseOnBox === true) {
             return;
