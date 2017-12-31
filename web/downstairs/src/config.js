@@ -38,6 +38,17 @@ export const DefaultDrawMaskBoxStyle = {
         FillAlpha: 0.9
     },
 };
+export const DefaultDrawBoundStyle = {
+    LineStyle:{
+        LineWidth: 0,
+        LineColor: 0xffffff,
+        LineAlpha: 1,
+    },
+    FillStyle:{
+        FillColor: 0xffffff,
+        FillAlpha: 1
+    },
+};
 
 //----- for Game -----
 export const PixelScaleRate = 1.0;
@@ -383,6 +394,17 @@ export const SettingRollLedgeCheckBoxPos = {
 // for play state
 export const PlayDrawBoxPos = GameDrawBoxPos;
 export const PlayDrawBoxSize = GameDrawBoxSize;
+export const PlayDrawBoxStyle = {
+    LineStyle:{
+        LineWidth: 2,
+        LineColor: 0x000000,
+        LineAlpha: 1,
+    },
+    FillStyle:{
+        FillColor: 0xffffff,
+        FillAlpha: 0
+    },
+};
 export const MainGameDrawBoxPos = {
     X: 60 * PixelScaleRate,
     Y: 100 * PixelScaleRate,
@@ -404,6 +426,8 @@ export const MainGameDrawBoxStyle = {
         FillAlpha: 0
     },
 };
+export const CountDownTime = 3;
+export const CountDownSpeed = 0.65;
 export const PlayerIniPos = {
     X: 406 * PixelScaleRate,
     Y: 370 * PixelScaleRate
@@ -448,42 +472,10 @@ export const ThornLedgeBodySize = {
     OffsetX: 0,
     OffsetY: 30 * PixelScaleRate
 };
-export const GameBoundsUpDrawBoxPos = {
-    X: 0,
-    Y: 0,
-    Anchor: LeftTopAnchor
-};
-export const GameBoundsUpDrawBoxSize = {
-    Width: CameraWidth,
-    Height: 100 * PixelScaleRate
-};
-export const GameBoundsBottomDrawBoxPos = {
-    X: 0,
-    Y: 760 * PixelScaleRate,
-    Anchor: LeftTopAnchor
-};
-export const GameBoundsBottomDrawBoxSize = {
-    Width: CameraWidth,
-    Height: 40 * PixelScaleRate
-};
-export const GameBoundsLeftDrawBoxPos = {
-    X: 0,
-    Y: 0,
-    Anchor: LeftTopAnchor
-};
-export const GameBoundsLeftDrawBoxSize = {
-    Width: 60 * PixelScaleRate,
-    Height: WorldHeight
-};
-export const GameBoundsRightDrawBoxPos = {
-    X: 800 * PixelScaleRate,
-    Y: 0,
-    Anchor: LeftTopAnchor
-};
-export const GameBoundsRightDrawBoxSize = {
-    Width: 60 * PixelScaleRate,
-    Height: WorldHeight
-};
+export const GameUpBoundThick = 100 * PixelScaleRate;
+export const GameBottomBoundThick = 1 * PixelScaleRate;
+export const GameLeftBoundThick = 60 * PixelScaleRate;
+export const GameRightBoundThick = 60 * PixelScaleRate;
 export const PauseMenuDrawBoxPos = SettingMenuDrawBoxPos;
 export const PauseMenuDrawBoxSize = SettingMenuDrawBoxSize;
 export const PauseMenuTitlePos = SettingMenuTitlePos;
@@ -512,3 +504,14 @@ export const CountDownPauseHintText = {
     Y: 710 * PixelScaleRate,
     Anchor: CenterAnchor
 };
+
+// for game bounds block
+export const DefaultBoundThick = 100 * PixelScaleRate;
+
+// for ledges effect
+export const DefaultNormalLedgeWeight = 10;
+export const DefaultSandLedgeWeight = 2;
+export const DefaultThornLedgeWeight = 3;
+export const DefaultJumpLedgeWeight = 2;
+export const DefaultLeftLedgeWeight = 1;
+export const DefaultRightLedgeWeight = 1;

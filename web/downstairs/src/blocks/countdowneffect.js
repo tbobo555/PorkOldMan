@@ -6,12 +6,12 @@ import DictUS from "../dicts/us";
 
 
 class CountDownEffect extends Container {
-    constructor(game) {
+    constructor(game, time, speed) {
         super(game);
         this.Dict = DictUS;
         this.isRunning = false;
-        this.countTime = 3;
-        this.speed = 0.65;
+        this.countTime = time;
+        this.speed = speed;
 
         // 建立遮罩
         let mask = new Mask(this.game);

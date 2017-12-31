@@ -7,7 +7,9 @@ export function autoAdjustGameScreenSize(divName) {
 }
 
 export function pushElementToArray(arr, element, times) {
-    times = times || 1;
+    if (times === undefined) {
+        times = 1;
+    }
     if (times <= 0) {
         return arr;
     }
@@ -30,6 +32,17 @@ export function removeArrayElementByValue(arr) {
 
 export function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function getGCD(a, b) {
+    if(b === 0){
+        return a;
+    }
+    return getGCD(b, a%b);
+}
+
+export function getArrayGCD (array) {
+    return array.reduce(getGCD);
 }
 
 export function distanceToXY(sprite, x, y, world) {
