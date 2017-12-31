@@ -15,6 +15,9 @@ class PauseMenu extends Container {
         // 載入字典檔
         this.Dict = DictUS;
 
+        // 從cookie載入配置設定
+        let setting = Utils.loadDownstairsGameSetting();
+        this.soundSetting = setting.Sounds;
         this.inputPriority = inputPriority;
         this.onContinueCallBack = onContinueCallBack;
 
