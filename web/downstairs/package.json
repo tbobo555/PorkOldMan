@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack",
+    "sandbox": "webpack --config webpack.sandbox.config.js",
     "test": "eslint ./src/**/**.js"
   },
   "repository": {
