@@ -296,6 +296,12 @@ export const MainTextureAtlasKey = {
     Sounds: "sounds.jpg"
 };
 
+// for assets
+
+// scroll counter
+export const ScrollCounterImageName = "ScrollCounter";
+
+
 //----- for preload state -----
 // loading文字的放置位置
 export const LoadingTextPos = WorldCenterPosCenterAnchor;
