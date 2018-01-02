@@ -8,6 +8,7 @@ import CountDownEffect from "../blocks/countdowneffect";
 import PauseMenu from "../blocks/pausemenu";
 import GameBounds from "../blocks/gamebounds";
 import Box from "../objects/box";
+import ScrollCounter from "../blocks/scrollcounter";
 
 class Play1PState extends Phaser.State {
     constructor() {
@@ -31,10 +32,17 @@ class Play1PState extends Phaser.State {
         this.mainGameBox = null;
         this.player = null;
 
+        // scroll counter
+        this.scrollCounter = null;
+
         // game setting
         this.isPause = false;
         this.pauseToggler = false;
         this.setting = null;
+
+        // game timer
+        this.gameTimer = null;
+        this.pauseTimer = null;
 
         // pause menu objects
         this.pauseMenu = null;
@@ -50,6 +58,11 @@ class Play1PState extends Phaser.State {
         // 加入自訂的pause功能
         this.game.onPause.add(this.pauseGame, this);
         this.game.onResume.add(this.pauseGame, this);
+
+        // 初始化 timer
+        this.gameTimer = game.time.events;
+        this.pauseTimer = game.time.create(false);
+        this.pauseTimer.start();
 
         // 從cookie載入設定
         this.setting = Utils.loadDownstairsGameSetting();
@@ -137,11 +150,20 @@ class Play1PState extends Phaser.State {
         );
         this.game.add.existing(this.mainGameBox);
 
+        // 加入滾動式計數器
+        this.scrollCounter = new ScrollCounter(
+            this.game,
+            Config.ScrollCounterPos.X,
+            Config.ScrollCounterPos.Y,
+            Config.ScrollCounterSpeed
+        );
+
         // 加入倒數計時
         this.countDownEffect = new CountDownEffect(
             this.game,
             Config.CountDownTime,
-            Config.CountDownSpeed
+            Config.CountDownSpeed,
+            this.pauseTimer
         );
 
         // 加入暫停選單
@@ -232,14 +254,15 @@ class Play1PState extends Phaser.State {
         this.pauseGame();
         this.pauseToggler = false;
         this.pauseMenu.hideAll();
-        this.game.time.events.resume();
+        this.pauseTimer.resume();
         this.countDownEffect.run(this.resumeGame.bind(this));
     }
 
     pauseGame() {
         this.isPause = true;
         this.pauseToggler = true;
-        this.game.time.events.pause();
+        this.gameTimer.pause();
+        this.pauseTimer.pause();
         this.game.physics.arcade.isPaused = true;
         this.player.animations.paused = true;
         let ledgeSet = this.ledgesEffect.getAll();
@@ -256,7 +279,7 @@ class Play1PState extends Phaser.State {
         ledgeSet.forEach((item) => {
             item.animations.paused = false;
         });
-        this.game.time.events.resume();
+        this.gameTimer.resume();
         this.game.physics.arcade.isPaused = false;
         this.pauseToggler = false;
         this.isPause = false;
@@ -268,7 +291,7 @@ class Play1PState extends Phaser.State {
             this.pauseGame();
         } else {
             this.pauseMenu.hideAll();
-            this.game.time.events.resume();
+            this.pauseTimer.resume();
             if (!this.countDownEffect.isRunning) {
                 this.countDownEffect.run(this.resumeGame.bind(this));
             }

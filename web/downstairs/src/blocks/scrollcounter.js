@@ -18,7 +18,7 @@ class ScrollCounter extends Container {
         this.scrollBoxWidth = template.width;
         this.one = new Phaser.TileSprite(
             game,
-            x + (3 * this.scrollBoxWidth),
+            x + (1.5 * this.scrollBoxWidth),
             y,
             this.scrollBoxWidth,
             this.scrollBoxHeight,
@@ -27,7 +27,7 @@ class ScrollCounter extends Container {
         this.one.anchor.set(0.5, 0.5);
         this.ten = new Phaser.TileSprite(
             game,
-            x + (2 * this.scrollBoxWidth),
+            x + (0.5 * this.scrollBoxWidth),
             y,
             this.scrollBoxWidth,
             this.scrollBoxHeight,
@@ -36,7 +36,7 @@ class ScrollCounter extends Container {
         this.ten.anchor.set(0.5, 0.5);
         this.hundred = new Phaser.TileSprite(
             game,
-            x + this.scrollBoxWidth,
+            x - (0.5 * this.scrollBoxWidth),
             y,
             this.scrollBoxWidth,
             this.scrollBoxHeight,
@@ -45,7 +45,7 @@ class ScrollCounter extends Container {
         this.hundred.anchor.set(0.5, 0.5);
         this.thousand = new Phaser.TileSprite(
             game,
-            x,
+            x - (1.5 * this.scrollBoxWidth),
             y,
             this.scrollBoxWidth,
             this.scrollBoxHeight,

@@ -6,12 +6,16 @@ import DictUS from "../dicts/us";
 
 
 class CountDownEffect extends Container {
-    constructor(game, time, speed) {
+    constructor(game, time, speed, timer) {
         super(game);
         this.Dict = DictUS;
         this.isRunning = false;
         this.countTime = time;
         this.speed = speed;
+        if (timer === undefined) {
+            timer = game.time.events;
+        }
+        this.timer = timer;
 
         // 建立遮罩
         let mask = new Mask(this.game);
@@ -57,13 +61,13 @@ class CountDownEffect extends Container {
         this.countDownText.text = counterText;
         let runEnd = false;
         this.showAll();
-        let loop = this.game.time.events.loop(
+        let loop = this.timer.loop(
             Phaser.Timer.SECOND * this.speed,
             () => {
                 if (runEnd) {
                     this.hideAll();
                     this.isRunning = false;
-                    this.game.time.events.remove(loop);
+                    this.timer.remove(loop);
                     if (callback) {
                         callback();
                     }

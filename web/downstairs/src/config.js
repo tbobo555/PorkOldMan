@@ -510,6 +510,12 @@ export const CountDownPauseHintText = {
     Y: 710 * PixelScaleRate,
     Anchor: CenterAnchor
 };
+export const ScrollCounterPos = {
+    X: WorldWidth / 2,
+    Y:65,
+    Anchor: CenterAnchor
+};
+export const ScrollCounterSpeed = 2700;
 
 // for game bounds block
 export const DefaultBoundThick = 100 * PixelScaleRate;

@@ -55,9 +55,9 @@ class PreloadState extends Phaser.State {
             Config.LedgesAtlasPath.JSON
         );
         let styles = {
-            font: "bold 70pt Arial",
+            font: "60px Play",
             fill: "black",
-            align: "left",
+            align: "center",
             wordWrap: true,
             wordWrapWidth: 5
         };
