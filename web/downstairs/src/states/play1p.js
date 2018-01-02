@@ -67,33 +67,17 @@ class Play1PState extends Phaser.State {
         // 從cookie載入設定
         this.setting = Utils.loadDownstairsGameSetting();
 
-        // 配置每種階梯的比重 (該比重會影響階梯的出現率)
-        let normalWeight = Config.DefaultNormalLedgeWeight;
-        let sandWeight = Config.DefaultSandLedgeWeight;
-        let thornWeight = Config.DefaultThornLedgeWeight;
-        let jumpWeight = Config.DefaultJumpLedgeWeight;
-        let leftWeight = Config.DefaultLeftLedgeWeight;
-        let rightWeight = Config.DefaultRightLedgeWeight;
-        if (this.setting.SandLedge === false) {
-            sandWeight = 0;
-        }
-        if (this.setting.JumpLedge === false) {
-            jumpWeight = 0;
-        }
-        if (this.setting.RollLedge === false) {
-            leftWeight = 0;
-            rightWeight = 0;
-        }
         // 建置 ledges effect
         this.ledgesEffect = new LedgesEffect(
             this.game,
+            Config.LedgeBasicSpeed,
             Config.MaxLedgesNumber,
-            normalWeight,
-            sandWeight,
-            thornWeight,
-            jumpWeight,
-            leftWeight,
-            rightWeight
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
         );
 
         // 建置自訂的遊戲邊界
@@ -179,6 +163,10 @@ class Play1PState extends Phaser.State {
         this.escKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
         // 監聽space鍵
         this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+        // 配置每種階梯的比重 (該比重會影響階梯的出現率)
+        this.adjustGameDifficulty();
+        this.gameTimer.loop(Phaser.Timer.SECOND * 5,  this.adjustGameDifficulty.bind(this), this);
 
         // 開始遊戲！
         this.startGame();
@@ -296,6 +284,45 @@ class Play1PState extends Phaser.State {
                 this.countDownEffect.run(this.resumeGame.bind(this));
             }
         }
+    }
+
+    adjustGameDifficulty() {
+        let time = this.scrollCounter.counts;
+        let degree = Math.floor(time / 10);
+        if (degree > 24) {
+            return;
+        }
+        let normalWeight = Config.DefaultNormalLedgeWeight;
+        let sandWeight = Config.DefaultSandLedgeWeight;
+        let thornWeight = Config.DefaultThornLedgeWeight;
+        let jumpWeight = Config.DefaultJumpLedgeWeight;
+        let leftWeight = Config.DefaultLeftLedgeWeight;
+        let rightWeight = Config.DefaultRightLedgeWeight;
+
+        if (this.setting.SandLedge === false) {
+            sandWeight = 0;
+            normalWeight --;
+        } else {
+            sandWeight = sandWeight + Math.floor(time / 15);
+        }
+        if (this.setting.JumpLedge === false) {
+            jumpWeight = 0;
+            normalWeight --;
+        } else {
+            jumpWeight = jumpWeight + Math.floor(time / 25);
+        }
+        if (this.setting.RollLedge === false) {
+            leftWeight = 0;
+            rightWeight = 0;
+            normalWeight --;
+        } else {
+            leftWeight = leftWeight + Math.floor(time / 25);
+            rightWeight = rightWeight + Math.floor(time / 25);
+        }
+        normalWeight += degree;
+        thornWeight += degree;
+        this.ledgesEffect.setLedgeSpeed(Config.LedgeBasicSpeed + (5 * degree));
+        this.ledgesEffect.setLedgeWeight(normalWeight, sandWeight, jumpWeight, thornWeight, leftWeight, rightWeight);
     }
 }
 

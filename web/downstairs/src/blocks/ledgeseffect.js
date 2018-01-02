@@ -6,7 +6,7 @@ import * as Motion from "../events/motions";
 
 
 class LedgesEffect extends Container {
-    constructor(game, ledgeNumber, normalWeight, sandWeight, thornWeight, jumpWeight, leftWeight, rightWeight) {
+    constructor(game, speed, ledgeNumber, normalWeight, sandWeight, thornWeight, jumpWeight, leftWeight, rightWeight) {
         super(game);
 
         if (ledgeNumber === undefined) {
@@ -38,6 +38,11 @@ class LedgesEffect extends Container {
         this.leftWeight = leftWeight;
         this.rightWeight = rightWeight;
         this.ledgesRate = this.reCalculateRate();
+
+        if (speed === undefined) {
+            speed = Config.LedgeBasicSpeed;
+        }
+        this.speed = speed;
 
         // 建立 ledge 物件
         for (let i = 0; i < ledgeNumber; i++) {
@@ -74,6 +79,9 @@ class LedgesEffect extends Container {
             this.leftWeight,
             this.rightWeight
         ]);
+        if (gcd < 0) {
+            gcd = 1;
+        }
 
         // 將比重除以最大公因數
         this.normalWeight = this.normalWeight / gcd;
@@ -121,6 +129,26 @@ class LedgesEffect extends Container {
         this.reCalculateRate();
     }
 
+    addLedgeSpeed(speed) {
+        this.speed += speed;
+        this.run();
+    }
+
+    setLedgeWeight(normal, sand, jump, thorn, left, right) {
+        this.normalWeight = normal;
+        this.sandWeight = sand;
+        this.jumpWeight = jump;
+        this.thornWeight = thorn;
+        this.leftWeight = left;
+        this.rightWeight = right;
+        this.reCalculateRate();
+    }
+
+    setLedgeSpeed(speed) {
+        this.speed = speed;
+        this.run();
+    }
+
     run() {
         let ledgesSet = this.getAll();
         ledgesSet.forEach((ledge) => {
@@ -129,7 +157,7 @@ class LedgesEffect extends Container {
                 ledge,
                 ledge.x,
                 Config.LedgePos.MinY,
-                Config.LedgeBasicSpeed,
+                this.speed,
                 0,
                 this.resetLedgePos.bind(this),
                 this
@@ -149,7 +177,7 @@ class LedgesEffect extends Container {
             ledge,
             ledge.x,
             Config.LedgePos.MinY,
-            Config.LedgeBasicSpeed,
+            this.speed,
             0,
             this.resetLedgePos.bind(this),
             this

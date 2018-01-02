@@ -446,12 +446,12 @@ export const PlayerIgnoreCollide = {
     X: 15 * PixelScaleRate,
     Y: 30 * PixelScaleRate
 };
-export const PlayerJumpSpeed = -400;
+export const PlayerJumpSpeed = -300;
 export const PlayerLeftSpeed = -220;
 export const PlayerRightSpeed = 220;
 export const MaxLedgesNumber = 8;
 export const MiddleLedgesNumber = MaxLedgesNumber / 2;
-export const LedgeBasicSpeed = 100;
+export const LedgeBasicSpeed = 115;
 export const LedgePos = {
     MinX: 60 * PixelScaleRate,
     MaxX: 620 * PixelScaleRate,
@@ -521,7 +521,7 @@ export const ScrollCounterSpeed = 2700;
 export const DefaultBoundThick = 100 * PixelScaleRate;
 
 // for ledges effect
-export const DefaultNormalLedgeWeight = 10;
+export const DefaultNormalLedgeWeight = 9;
 export const DefaultSandLedgeWeight = 2;
 export const DefaultThornLedgeWeight = 3;
 export const DefaultJumpLedgeWeight = 2;

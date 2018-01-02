@@ -34,8 +34,11 @@ class Player extends Phaser.Sprite {
         this.body.velocity.x = Config.PlayerRightSpeed + bonus;
     }
 
-    runJump() {
-        this.body.velocity.y = Config.PlayerJumpSpeed;
+    runJump(bonus) {
+        if (bonus === undefined) {
+            bonus = -100;
+        }
+        this.body.velocity.y = Config.PlayerJumpSpeed + bonus;
     }
 
     runStand(bonus) {

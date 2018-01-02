@@ -36,7 +36,11 @@ export function getRandomInt(min, max) {
 
 export function getGCD(a, b) {
     if(b === 0){
-        return a;
+        if (a !== 0) {
+            return a;
+        } else {
+            return 1;
+        }
     }
     return getGCD(b, a%b);
 }

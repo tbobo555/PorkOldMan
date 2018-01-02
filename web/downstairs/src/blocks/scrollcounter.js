@@ -9,6 +9,7 @@ class ScrollCounter extends Container {
         if (speed === undefined) {
             speed = 2700;
         }
+        this.counts = 0;
         this.counter = null;
         this.speed = speed;
 
@@ -96,6 +97,7 @@ class ScrollCounter extends Container {
                 Phaser.Easing.Default,
                 true
             );
+            this.counts ++;
         }, this);
     }
 }

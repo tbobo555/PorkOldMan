@@ -121,7 +121,7 @@ class Ledge extends Phaser.Sprite {
             break;
         case Config.LedgeTypes.Jump:
             this.animations.play(Config.JumpLedgeAnimationName);
-            target.runJump();
+            target.runJump(this.body.velocity.y);
             break;
         case Config.LedgeTypes.Left:
             target.speedBouns = -100;
