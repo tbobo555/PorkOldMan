@@ -81,3 +81,12 @@ func IndexServe(writer http.ResponseWriter, request *http.Request) {
         fmt.Println("executing template:", err)
     }
 }
+
+func GameServe(writer http.ResponseWriter, request *http.Request) {
+    indexTemplate := template.New("game.html")
+    indexTemplate.ParseFiles("public/game.html")
+    err := indexTemplate.Execute(writer, nil)
+    if err != nil {
+        fmt.Println("executing template:", err)
+    }
+}
