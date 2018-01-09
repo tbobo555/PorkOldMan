@@ -2,7 +2,7 @@
 
 "buttonA.png":
 {
-	"frame": {"x":127,"y":1,"w":60,"h":60},
+	"frame": {"x":163,"y":83,"w":60,"h":60},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
@@ -10,7 +10,7 @@
 },
 "buttonD.png":
 {
-	"frame": {"x":189,"y":1,"w":60,"h":60},
+	"frame": {"x":225,"y":83,"w":60,"h":60},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
@@ -18,7 +18,7 @@
 },
 "buttonLeft.png":
 {
-	"frame": {"x":313,"y":1,"w":60,"h":60},
+	"frame": {"x":349,"y":83,"w":60,"h":60},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
@@ -26,7 +26,7 @@
 },
 "buttonRight.png":
 {
-	"frame": {"x":251,"y":1,"w":60,"h":60},
+	"frame": {"x":287,"y":83,"w":60,"h":60},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
@@ -34,7 +34,7 @@
 },
 "checkbox-01.png":
 {
-	"frame": {"x":73,"y":1,"w":52,"h":38},
+	"frame": {"x":215,"y":33,"w":52,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":38},
@@ -42,15 +42,31 @@
 },
 "checkbox-02.png":
 {
-	"frame": {"x":33,"y":1,"w":38,"h":38},
+	"frame": {"x":269,"y":33,"w":38,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
 	"sourceSize": {"w":38,"h":38}
 },
+"facebook.png":
+{
+	"frame": {"x":359,"y":33,"w":48,"h":48},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":48},
+	"sourceSize": {"w":48,"h":48}
+},
+"instagram.png":
+{
+	"frame": {"x":309,"y":33,"w":48,"h":48},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":48},
+	"sourceSize": {"w":48,"h":48}
+},
 "lifebar-border.png":
 {
-	"frame": {"x":163,"y":63,"w":180,"h":30},
+	"frame": {"x":1,"y":33,"w":180,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":30},
@@ -58,7 +74,7 @@
 },
 "lifebar-content.png":
 {
-	"frame": {"x":1,"y":117,"w":360,"h":30},
+	"frame": {"x":1,"y":1,"w":360,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":360,"h":30},
@@ -66,7 +82,7 @@
 },
 "sounds.png":
 {
-	"frame": {"x":1,"y":63,"w":160,"h":52},
+	"frame": {"x":1,"y":83,"w":160,"h":52},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":160,"h":52},
@@ -74,7 +90,7 @@
 },
 "thorn.png":
 {
-	"frame": {"x":1,"y":1,"w":30,"h":30},
+	"frame": {"x":183,"y":33,"w":30,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":30},
@@ -85,8 +101,8 @@
 	"version": "1.0",
 	"image": "atlas_maintexture.png",
 	"format": "RGBA8888",
-	"size": {"w":374,"h":148},
+	"size": {"w":410,"h":144},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:0dda5a58fdb281808b23bd65cdbecfbc:bc996973f29b4d5ba265e6934792eec5:aa5249fd90514698b80990d8fc9e22cf$"
+	"smartupdate": "$TexturePacker:SmartUpdate:96e3ad371481bf05b7d574668d5e2792:8a48458146505fab1c371382f5e6505b:aa5249fd90514698b80990d8fc9e22cf$"
 }
 }
