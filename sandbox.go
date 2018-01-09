@@ -7,8 +7,8 @@ import (
     "github.com/gorilla/mux"
 )
 
-// server for development
-func main8000() {
+// 開發與測試時使用的main
+func sandbox() {
     router := mux.NewRouter()
     // test example
     router.HandleFunc("/", controller.IndexServe)
@@ -19,7 +19,7 @@ func main8000() {
     router.HandleFunc("/io/game/downstairs/{token}", controller.IoGameDownStairsServeSocket).Methods("GET"). Headers("Connection", "Upgrade").Headers("Upgrade", "websocket")
     router.PathPrefix("/game/assets/").Handler(http.StripPrefix("/game/", http.FileServer(http.Dir("./public"))))
     http.Handle("/", router)
-    err := http.ListenAndServe(":80", nil)
+    err := http.ListenAndServe(":8080", nil)
     if err != nil {
         log.Fatal("occur error here: ", err.Error())
     }

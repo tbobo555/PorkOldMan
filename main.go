@@ -13,7 +13,7 @@ func main() {
 	// game downstairs router
 	router.HandleFunc("/game/downstairs", controller.GameServe).Methods("GET")
 	http.Handle("/", router)
-	err := http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("occur error here: ", err.Error())
 	}
