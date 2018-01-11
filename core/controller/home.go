@@ -4,6 +4,7 @@ import (
     "net/http"
     "text/template"
     "github.com/gorilla/mux"
+    "porkoldman/core/config"
     "porkoldman/core/block/downstairs"
     "porkoldman/core/middleware/log"
     "porkoldman/core"
@@ -32,7 +33,7 @@ func GameDownStairsServeGet(writer http.ResponseWriter, request *http.Request) {
     }
     socketToken := resp["SocketToken"]
     indexTemplate := template.New("downstairs.html")
-    indexTemplate.ParseFiles("public/downstairs.html")
+    indexTemplate.ParseFiles(config.ServiceRootPath + "public/downstairs.html")
     err = indexTemplate.Execute(writer, socketToken)
     if err != nil {
         core.ShowErrorPage(writer, http.StatusInternalServerError)
@@ -62,10 +63,10 @@ func IndexServe(writer http.ResponseWriter, request *http.Request) {
         {"Index", "<H1>" + id + "</H1>", false},
     }
 
-    headerTemplate := template.Must(template.ParseFiles("public/header.html"))
-    footerTemplate := template.Must(template.ParseFiles("public/footer.html"))
+    headerTemplate := template.Must(template.ParseFiles(config.ServiceRootPath + "public/header.html"))
+    footerTemplate := template.Must(template.ParseFiles(config.ServiceRootPath + "public/footer.html"))
     indexTemplate := template.New("index.html")
-    indexTemplate.ParseFiles("public/index.html")
+    indexTemplate.ParseFiles(config.ServiceRootPath + "public/index.html")
     err := headerTemplate.Execute(writer, nil)
     if err != nil {
         fmt.Println("executing template:", err)
@@ -77,15 +78,6 @@ func IndexServe(writer http.ResponseWriter, request *http.Request) {
     }
 
     err = footerTemplate.Execute(writer, nil)
-    if err != nil {
-        fmt.Println("executing template:", err)
-    }
-}
-
-func GameServe(writer http.ResponseWriter, request *http.Request) {
-    indexTemplate := template.New("game.html")
-    indexTemplate.ParseFiles("public/game.html")
-    err := indexTemplate.Execute(writer, nil)
     if err != nil {
         fmt.Println("executing template:", err)
     }
