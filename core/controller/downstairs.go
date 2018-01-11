@@ -3,16 +3,21 @@ package controller
 import (
     "net/http"
     "text/template"
-    "github.com/gorilla/websocket"
     "porkoldman/core/block/downstairs"
     "porkoldman/core"
     "porkoldman/core/middleware/log"
-    "porkoldman/core/config"
 )
 
-var upgrader = websocket.Upgrader {
-    ReadBufferSize:  1024,
-    WriteBufferSize: 1024,
+// 下樓梯遊戲服務
+func DownStairs(writer http.ResponseWriter, request *http.Request) {
+    indexTemplate := template.New("downstairs.html")
+    indexTemplate.ParseFiles(FilePath + "downstairs.html")
+    err := indexTemplate.Execute(writer, nil)
+    if err != nil {
+        core.ShowErrorPage(writer, http.StatusInternalServerError)
+        log.WriteError(core.AppErrorExceptionStatus, err.Error(), request)
+        return
+    }
 }
 
 // [測試中]下樓梯遊戲的主要服務
@@ -37,7 +42,7 @@ func TestingDownStairs(writer http.ResponseWriter, request *http.Request) {
     }
     socketToken := resp["SocketToken"]
     indexTemplate := template.New("downstairstesting.html")
-    indexTemplate.ParseFiles(config.PublicPath + "downstairstesting.html")
+    indexTemplate.ParseFiles(FilePath + "downstairstesting.html")
     err = indexTemplate.Execute(writer, socketToken)
     if err != nil {
         core.ShowErrorPage(writer, http.StatusInternalServerError)
@@ -56,7 +61,7 @@ func TestingDownStairsSocket(writer http.ResponseWriter, request *http.Request) 
         return
     }
     // connect to web socket
-    conn, err := upgrader.Upgrade(writer, request, nil)
+    conn, err := Upgrader.Upgrade(writer, request, nil)
     if err != nil {
         core.ShowErrorPage(writer, http.StatusInternalServerError)
         log.WriteError(core.AppErrorExceptionStatus, err.Error(), request)

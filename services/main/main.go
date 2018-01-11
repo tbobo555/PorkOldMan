@@ -17,7 +17,7 @@ func main() {
     // game downstairs router
     router.HandleFunc("/game/downstairs", controller.TestingDownStairs).Methods("GET")
     router.HandleFunc("/io/game/downstairs/{token}", controller.TestingDownStairsSocket).Methods("GET"). Headers("Connection", "Upgrade").Headers("Upgrade", "websocket")
-    router.PathPrefix("/game/assets/").Handler(http.StripPrefix("/game/", http.FileServer(http.Dir(config.PublicPath))))
+    router.PathPrefix("/game/assets/").Handler(http.StripPrefix("/game/", http.FileServer(http.Dir(config.PublicPathForService))))
     http.Handle("/", router)
     err := http.ListenAndServe(":8080", nil)
     if err != nil {

@@ -185,7 +185,7 @@ func (s *SessionCodec) Decode(input string) (*Session, error) {
 func NewSessionManager() *SessionManager {
     return &SessionManager{
         store: &StoreFile{
-            path: config.SessionPath,
+            path: config.SessionPathForService,
             handler: &FileHandler{},
             codec: &SessionCodec{
                 codec: NewAesCbcCodec(),

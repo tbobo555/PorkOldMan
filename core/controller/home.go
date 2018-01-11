@@ -4,7 +4,6 @@ import (
     "net/http"
     "text/template"
     "github.com/gorilla/mux"
-    "porkoldman/core/config"
     "fmt"
 )
 
@@ -29,10 +28,10 @@ func IndexServe(writer http.ResponseWriter, request *http.Request) {
         {"Index", "<H1>" + id + "</H1>", false},
     }
 
-    headerTemplate := template.Must(template.ParseFiles(config.PublicPath + "header.html"))
-    footerTemplate := template.Must(template.ParseFiles(config.PublicPath + "footer.html"))
+    headerTemplate := template.Must(template.ParseFiles(FilePath + "header.html"))
+    footerTemplate := template.Must(template.ParseFiles(FilePath + "footer.html"))
     indexTemplate := template.New("index.html")
-    indexTemplate.ParseFiles(config.PublicPath + "index.html")
+    indexTemplate.ParseFiles(FilePath + "index.html")
     err := headerTemplate.Execute(writer, nil)
     if err != nil {
         fmt.Println("executing template:", err)

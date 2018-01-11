@@ -24,3 +24,8 @@ config.go
 #Ignore cache & log
 cache/
 log/
+
+# Ignore node module packages
+node_modules
+package-lock.json
+

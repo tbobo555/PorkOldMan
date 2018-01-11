@@ -22,7 +22,7 @@ func WriteError(status, err string, request *http.Request) {
 
 func AppDebug(err string, r *http.Request) {
     logger := middleware.AppLog{
-        RootPath: config.LogRootPath,
+        RootPath: config.LogPathForService,
     }
     appError := middleware.NewAppError(core.AppErrorDebugStatus, err, r)
     appErrString, e := appError.Error()
@@ -35,7 +35,7 @@ func AppDebug(err string, r *http.Request) {
 
 func AppInfo(err string, r *http.Request) {
     logger := middleware.AppLog{
-        RootPath: config.LogRootPath,
+        RootPath: config.LogPathForService,
     }
     appError := middleware.NewAppError(core.AppErrorInfoStatus, err, r)
     appErrString, e := appError.Error()
@@ -48,7 +48,7 @@ func AppInfo(err string, r *http.Request) {
 
 func AppException(err string, r *http.Request) {
     logger := middleware.AppLog{
-        RootPath: config.LogRootPath,
+        RootPath: config.LogPathForService,
     }
     appError := middleware.NewAppError(core.AppErrorExceptionStatus, err, r)
     appErrString, e := appError.Error()
@@ -61,7 +61,7 @@ func AppException(err string, r *http.Request) {
 
 func AppAlert(err string, r *http.Request) {
     logger := middleware.AppLog{
-        RootPath: config.LogRootPath,
+        RootPath: config.LogPathForService,
     }
     appError := middleware.NewAppError(core.AppErrorAlertStatus, err, r)
     appErrString, e := appError.Error()

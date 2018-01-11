@@ -1,0 +1,108 @@
+{"frames": {
+
+"buttonA.png":
+{
+	"frame": {"x":163,"y":83,"w":60,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
+	"sourceSize": {"w":60,"h":60}
+},
+"buttonD.png":
+{
+	"frame": {"x":225,"y":83,"w":60,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
+	"sourceSize": {"w":60,"h":60}
+},
+"buttonLeft.png":
+{
+	"frame": {"x":349,"y":83,"w":60,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
+	"sourceSize": {"w":60,"h":60}
+},
+"buttonRight.png":
+{
+	"frame": {"x":287,"y":83,"w":60,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
+	"sourceSize": {"w":60,"h":60}
+},
+"checkbox-01.png":
+{
+	"frame": {"x":215,"y":33,"w":52,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":38},
+	"sourceSize": {"w":52,"h":38}
+},
+"checkbox-02.png":
+{
+	"frame": {"x":269,"y":33,"w":38,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
+	"sourceSize": {"w":38,"h":38}
+},
+"facebook.png":
+{
+	"frame": {"x":359,"y":33,"w":48,"h":48},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":48},
+	"sourceSize": {"w":48,"h":48}
+},
+"instagram.png":
+{
+	"frame": {"x":309,"y":33,"w":48,"h":48},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":48},
+	"sourceSize": {"w":48,"h":48}
+},
+"lifebar-border.png":
+{
+	"frame": {"x":1,"y":33,"w":180,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":30},
+	"sourceSize": {"w":180,"h":30}
+},
+"lifebar-content.png":
+{
+	"frame": {"x":1,"y":1,"w":360,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":360,"h":30},
+	"sourceSize": {"w":360,"h":30}
+},
+"sounds.png":
+{
+	"frame": {"x":1,"y":83,"w":160,"h":52},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":160,"h":52},
+	"sourceSize": {"w":160,"h":52}
+},
+"thorn.png":
+{
+	"frame": {"x":183,"y":33,"w":30,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":30},
+	"sourceSize": {"w":30,"h":30}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "atlas_maintexture.png",
+	"format": "RGBA8888",
+	"size": {"w":410,"h":144},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:96e3ad371481bf05b7d574668d5e2792:8a48458146505fab1c371382f5e6505b:aa5249fd90514698b80990d8fc9e22cf$"
+}
+}
