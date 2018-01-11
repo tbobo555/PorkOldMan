@@ -20,3 +20,7 @@ DerivedData/
 
 #Ignore go secret file
 config.go
+
+#Ignore cache & log
+cache/
+log/

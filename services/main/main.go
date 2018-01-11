@@ -5,6 +5,7 @@ import (
     "log"
     "porkoldman/core/controller"
     "github.com/gorilla/mux"
+    "porkoldman/core/config"
 )
 
 func main() {
@@ -14,9 +15,9 @@ func main() {
     router.HandleFunc("/{id:[0-9]+}", controller.IndexServe).Methods("GET")
 
     // game downstairs router
-    router.HandleFunc("/game/downstairs", controller.GameDownStairsServeGet).Methods("GET")
-    router.HandleFunc("/io/game/downstairs/{token}", controller.IoGameDownStairsServeSocket).Methods("GET"). Headers("Connection", "Upgrade").Headers("Upgrade", "websocket")
-    router.PathPrefix("/game/assets/").Handler(http.StripPrefix("/game/", http.FileServer(http.Dir("./public"))))
+    router.HandleFunc("/game/downstairs", controller.TestingDownStairs).Methods("GET")
+    router.HandleFunc("/io/game/downstairs/{token}", controller.TestingDownStairsSocket).Methods("GET"). Headers("Connection", "Upgrade").Headers("Upgrade", "websocket")
+    router.PathPrefix("/game/assets/").Handler(http.StripPrefix("/game/", http.FileServer(http.Dir(config.PublicPath))))
     http.Handle("/", router)
     err := http.ListenAndServe(":8080", nil)
     if err != nil {

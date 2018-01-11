@@ -5,42 +5,8 @@ import (
     "text/template"
     "github.com/gorilla/mux"
     "porkoldman/core/config"
-    "porkoldman/core/block/downstairs"
-    "porkoldman/core/middleware/log"
-    "porkoldman/core"
     "fmt"
 )
-
-// 服務 "[Domain Name]/game/downstairs" (例如:http://porkoldman.com/game/downstairs) 的路由Method.
-func GameDownStairsServeGet(writer http.ResponseWriter, request *http.Request) {
-    homeBolck := &downstairs.Home{}
-    status, err := homeBolck.Load(writer, request)
-    if err != nil {
-        core.ShowErrorPage(writer, status)
-        log.WriteError(core.AppErrorExceptionStatus, err.Error(), request)
-        return
-    }
-    resp, err := homeBolck.Response()
-    if err != nil {
-        core.ShowErrorPage(writer, http.StatusInternalServerError)
-        log.WriteError(core.AppErrorExceptionStatus, err.Error(), request)
-        return
-    }
-    if _, ok := resp["SocketToken"]; !ok {
-        core.ShowErrorPage(writer, http.StatusInternalServerError)
-        log.WriteError(core.AppErrorExceptionStatus, err.Error(), request)
-        return
-    }
-    socketToken := resp["SocketToken"]
-    indexTemplate := template.New("downstairs.html")
-    indexTemplate.ParseFiles(config.ServiceRootPath + "public/downstairs.html")
-    err = indexTemplate.Execute(writer, socketToken)
-    if err != nil {
-        core.ShowErrorPage(writer, http.StatusInternalServerError)
-        log.WriteError(core.AppErrorExceptionStatus, err.Error(), request)
-        return
-    }
-}
 
 // 服務 "[Domain Name]/" (例如:http://porkoldman.com/) 的路由Method.
 func IndexServe(writer http.ResponseWriter, request *http.Request) {
@@ -63,10 +29,10 @@ func IndexServe(writer http.ResponseWriter, request *http.Request) {
         {"Index", "<H1>" + id + "</H1>", false},
     }
 
-    headerTemplate := template.Must(template.ParseFiles(config.ServiceRootPath + "public/header.html"))
-    footerTemplate := template.Must(template.ParseFiles(config.ServiceRootPath + "public/footer.html"))
+    headerTemplate := template.Must(template.ParseFiles(config.PublicPath + "header.html"))
+    footerTemplate := template.Must(template.ParseFiles(config.PublicPath + "footer.html"))
     indexTemplate := template.New("index.html")
-    indexTemplate.ParseFiles(config.ServiceRootPath + "public/index.html")
+    indexTemplate.ParseFiles(config.PublicPath + "index.html")
     err := headerTemplate.Execute(writer, nil)
     if err != nil {
         fmt.Println("executing template:", err)
